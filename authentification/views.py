@@ -15,6 +15,9 @@ from rest_framework import generics, permissions
 from rest_framework.exceptions import PermissionDenied
 from .models import CustomUser
 from .serializers import *
+from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 
 class IsAdminOrSelf(permissions.BasePermission):
     """
@@ -85,19 +88,25 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         if not (self.request.user.is_staff or self.request.user == user):
             raise permissions.PermissionDenied("You can only update your own profile")
         return user
-class LoginView(generics.GenericAPIView):
-    serializer_class = LoginSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            return Response(serializer.validated_data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
-
+@api_view(['POST'])
+@permission_classes([AllowAny])  # Décorateur correctement placé
+def login_view(request):
+    serializer = LoginSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'username': user.username
+            }
+        })
+    return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 class LogoutView(APIView):
     authentication_classes = [TokenAuthentication]  # Ensure token authentication is enforced
     permission_classes = [IsAuthenticated]
