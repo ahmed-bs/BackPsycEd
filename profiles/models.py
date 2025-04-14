@@ -2,9 +2,10 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from authentification.models import CustomUser
-
+from categories.models import UserCategory
 class Profile(models.Model):
     parent = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='children')
+    category = models.ForeignKey(UserCategory, on_delete=models.SET_NULL, null=True, blank=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     birth_date = models.DateField()
