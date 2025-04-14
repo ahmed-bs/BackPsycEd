@@ -14,6 +14,7 @@ User = get_user_model()
 from django.utils import timezone
 from datetime import timedelta
 import uuid
+from django.utils.translation import gettext_lazy as _
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,36 +61,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField(
-        write_only=True,
-        style={'input_type': 'password'}
-    )
+    username_or_email = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        email = data.get('email')
-        password = data.get('password')
-
-        if not email or not password:
-            raise serializers.ValidationError("Must include both email and password.")
-
-        user = authenticate(username=email, password=password)
-
+        user = authenticate(
+            username=data['username_or_email'],
+            password=data['password']
+        )
         if not user:
-            raise serializers.ValidationError("Unable to log in with provided credentials.")
-
-        if not user.is_active:
-            raise serializers.ValidationError("User account is disabled.")
-
-        token, created = Token.objects.get_or_create(user=user)
-
-        return {
-            "user": {
-                "user_id": user.id,
-                "email": user.email,
-                "username": user.username,
-                "token": token.key
-            }
-        }
-
-
+            raise serializers.ValidationError("Invalid credentials")
+        data['user'] = user
+        return data
