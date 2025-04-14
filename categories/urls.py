@@ -1,13 +1,23 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import CategoryViewSet, DomainViewSet, ItemViewSet, create_domain_with_items
-
-router = DefaultRouter()
-router.register(r'categories', CategoryViewSet)
-router.register(r'domains', DomainViewSet)
-router.register(r'items', ItemViewSet)
+# Exemple dans categories/urls.py
+from django.urls import path
+from .views import (
+    DefaultCategoryListView,
+    DefaultCategoryDetailView,
+    CopyCategoryToUserView,
+    UserCategoryDetailView,
+    AllDefaultCategoriesView,
+    UpdateUserCategoryView,
+    ListDefaultCategoriesView
+)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('create-with-items/', create_domain_with_items, name='create-domain-with-items'),
+    path('categories/standards/', ListDefaultCategoriesView.as_view(), name='list-default-categories'),
+    path('categories/update-copy/', UpdateUserCategoryView.as_view(), name='update-user-category'),
+    path('categories/', AllDefaultCategoriesView.as_view(), name='all-default-categories'),
+    path('categories/<int:profile_id>/', DefaultCategoryListView.as_view()),
+    path('categories/view/<int:category_id>/', DefaultCategoryDetailView.as_view()),
+    path('categories/copy/', CopyCategoryToUserView.as_view()),
+    path('profiles/<int:profile_id>/category/', UserCategoryDetailView.as_view()),
+ 
+
 ]
