@@ -1,23 +1,43 @@
 from rest_framework import serializers
-from .models import Category, Domain, Item
+from .models import *
 
-class ItemSerializer(serializers.ModelSerializer):
+
+class DefaultItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Item
-        fields = ['id', 'code', 'title', 'description']
+        model = DefaultItem
+        fields = '__all__'
 
 
-class DomainSerializer(serializers.ModelSerializer):
-    items = ItemSerializer(many=True, read_only=True)
+class DefaultDomainSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DefaultDomain
+        fields = '__all__'
+
+
+class DefaultCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DefaultCategory
+        fields = '__all__'
+
+
+class UserItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserItem
+        fields = '__all__'
+
+
+class UserDomainSerializer(serializers.ModelSerializer):
+    items = UserItemSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Domain
-        fields = ['id', 'code', 'title', 'description', 'category', 'items']
+        model = UserDomain
+        fields = '__all__'
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    domains = DomainSerializer(many=True, read_only=True)
+class UserCategorySerializer(serializers.ModelSerializer):
+    domains = UserDomainSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Category
-        fields = ['id', 'code', 'title', 'created_date', 'items_count', 'domains_count', 'domains']
+        model = UserCategory
+        fields = '__all__'
+
