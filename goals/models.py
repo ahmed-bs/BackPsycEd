@@ -1,6 +1,5 @@
 # goals/models.py
 from django.db import models
-from categories.models import Category
 
 class Goal(models.Model):
     objective_text = models.TextField()
