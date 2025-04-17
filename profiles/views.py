@@ -189,19 +189,19 @@ class ShareChildProfileView(APIView):
             serializer = ProfileShareSerializer(profile_share)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     def put(self, request, profile_id):
-        # 🔎 Récupérer le profil enfant
+        # Récupérer le profil enfant
         profile = self.get_child_profile(profile_id)
         if not profile:
             return Response({'error': 'Profil non trouvé.'}, status=404)
 
-        # 🔐 Récupérer le profil du demandeur (parent connecté)
+        #  Récupérer le profil du demandeur (parent connecté)
         requester_profile = Profile.objects.filter(user=request.user).first()
 
-        # ✅ Cas 1 : Le parent direct du profil
+        #  Cas 1 : Le parent direct du profil
         if profile.parent == requester_profile:
             pass  # autorisé
 
-        # ✅ Cas 2 : Profil partagé → vérifier can_write
+        #  Cas 2 : Profil partagé → vérifier can_write
         else:
             try:
                 share = ProfileShare.objects.get(profile=profile, shared_with=requester_profile)
