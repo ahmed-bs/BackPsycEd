@@ -83,15 +83,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
-# Configuration Email
-# settings.py
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'rabeb246mahmoudi@gmail.com'  # Utiliser variable d'environnement
-EMAIL_HOST_PASSWORD = 'Rabeb02/01/2019'  # Généré via compte Google os.getenv('GMAIL_USER')
-EMAIL_TIMEOUT = 15
 
 # If using Gmail, you might need an App Password:
 # https://myaccount.google.com/apppasswords
