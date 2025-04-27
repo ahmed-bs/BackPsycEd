@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProfileViewSet, ShareChildProfileView, CreateChildProfileView
+from .views import ProfileViewSet, ShareChildProfileView, CreateChildProfileView , ProfilesByParentView
 
 router = DefaultRouter()
 router.register(r'profiles', ProfileViewSet, basename='profiles')  # crée /profiles/
@@ -8,6 +8,7 @@ router.register(r'profiles', ProfileViewSet, basename='profiles')  # crée /prof
 urlpatterns = [
     # 🌱 CRUD des profils avec ViewSet
     path('', include(router.urls)),
+    path('profiles/by-parent/<int:parent_id>/', ProfilesByParentView.as_view(), name='profiles-by-parent'),
     path('my-children/', ProfileViewSet.as_view({'get': 'list_children'}), name='list-children'),
     # 👶 Création des enfants depuis un parent connecté
     path('create-children/', CreateChildProfileView.as_view(), name='create-children'),

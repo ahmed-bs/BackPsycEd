@@ -20,7 +20,6 @@ def parse_bool(value):
 
 from rest_framework.decorators import action
 
-
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -42,36 +41,67 @@ class ProfileViewSet(viewsets.ModelViewSet):
         # Admin voit tous les profils enfants (ceux avec un parent)
         return queryset.filter(parent__isnull=False)
 
-    @action(detail=False, methods=['get'], url_path='my-children')
-    def my_children(self, request):
+    @action(detail=False, methods=['get'], url_path='by-parent/(?P<parent_id>\d+)')
+    def profiles_by_parent(self, request, parent_id=None):
         """
-        Endpoint spécial pour Postman - Liste des enfants du parent connecté
+        Retrieve all profiles associated with a specific parent ID.
         """
-        if not request.user.is_parent():
+        # Check if the requester is authorized (e.g., admin or the parent themselves)
+        if not request.user.is_staff and str(request.user.id) != parent_id:
             return Response(
-                {"error": "Seuls les parents peuvent accéder à cette liste"},
+                {"error": "You are not authorized to view these profiles"},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        children = Profile.objects.filter(parent=request.user)
-        serializer = self.get_serializer(children, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['get'], url_path='my-children')
-    def list_children(self, request):
-        """
-        List all child profiles for the authenticated parent
-        """
-        # Verify user is a parent
-        if request.user.user_type != CustomUser.PARENT:
+        try:
+            parent = CustomUser.objects.get(id=parent_id)
+        except CustomUser.DoesNotExist:
             return Response(
-                {'error': 'Only parent users can access this endpoint.'},
-                status=status.HTTP_403_FORBIDDEN
+                {"error": "Parent not found"},
+                status=status.HTTP_404_NOT_FOUND
             )
 
-        children = self.get_queryset()
-        serializer = self.get_serializer(children, many=True)
-        return Response(serializer.data)
+        profiles = Profile.objects.filter(parent=parent)
+        serializer = self.get_serializer(profiles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+# class ProfileViewSet(viewsets.ModelViewSet):
+    # queryset = Profile.objects.all()
+    # serializer_class = ProfileSerializer
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+ 
+
+    # @action(detail=False, methods=['get'], url_path='my-children')
+    # def my_children(self, request):
+    #     """
+    #     Endpoint spécial pour Postman - Liste des enfants du parent connecté
+    #     """
+    #     if not request.user.is_parent():
+    #         return Response(
+    #             {"error": "Seuls les parents peuvent accéder à cette liste"},
+    #             status=status.HTTP_403_FORBIDDEN
+    #         )
+
+    #     children = Profile.objects.filter(parent=request.user)
+    #     serializer = self.get_serializer(children, many=True)
+    #     return Response(serializer.data)
+
+    # @action(detail=False, methods=['get'], url_path='my-children')
+    # def list_children(self, request):
+    #     """
+    #     List all child profiles for the authenticated parent
+    #     """
+    #     # Verify user is a parent
+    #     if request.user.user_type != CustomUser.PARENT:
+    #         return Response(
+    #             {'error': 'Only parent users can access this endpoint.'},
+    #             status=status.HTTP_403_FORBIDDEN
+    #         )
+
+    #     children = self.get_queryset()
+    #     serializer = self.get_serializer(children, many=True)
+    #     return Response(serializer.data)
 
 
 
@@ -277,3 +307,27 @@ class CreateChildProfileView(APIView):
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+class ProfilesByParentView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, parent_id):
+        """
+        Retrieve all profiles associated with a specific parent ID.
+        """
+        # Check if the requester is authorized (e.g., admin or the parent themselves)
+        if not request.user.is_staff and str(request.user.id) != parent_id:
+            return Response(
+                {"error": "You are not authorized to view these profiles"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        try:
+            parent = CustomUser.objects.get(id=parent_id, user_type=CustomUser.PARENT)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"error": "Parent not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        profiles = Profile.objects.filter(parent=parent)
+        serializer = ProfileSerializer(profiles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

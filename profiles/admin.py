@@ -1,21 +1,25 @@
 from django.contrib import admin
-from .models import Profile
-
+from .models import Profile, ProfileShare
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    # Explicitly list editable fields (exclude bio)
     fields = [
         'parent',
+        'category',
         'first_name',
         'last_name',
         'birth_date',
         'diagnosis',
         'notes',
+        'evaluation_score',
+        'objectives',
+        'progress',
+        'recommended_strategies',
+        'image_url',
         'is_active'
     ]
+    list_display = ['first_name', 'last_name', 'parent', 'is_active']
 
-    # Or alternatively, exclude the bio field
-    # exclude = ['bio']
-
-    list_display = ['first_name', 'last_name', 'parent']
+@admin.register(ProfileShare)
+class ProfileShareAdmin(admin.ModelAdmin):
+    list_display = ['profile', 'shared_with', 'can_read', 'can_write', 'can_update', 'can_delete']
