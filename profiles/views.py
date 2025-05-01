@@ -13,10 +13,8 @@ from .serializers import ProfileSerializer
 
 CustomUser = get_user_model()
 
-
 def parse_bool(value):
     return str(value).lower() in ['true', '1', 'yes']
-
 
 class ProfileViewSet(viewsets.ViewSet):
     authentication_classes = [TokenAuthentication]
@@ -37,7 +35,7 @@ class ProfileViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'], url_path='create-child')
     def create_child_profile(self, request):
-        """Create a child profile with parent assignment and autism category."""
+        """Create a child profile and assign permissions to the creator."""
         try:
             required_fields = ['first_name', 'last_name', 'birth_date']
             if any(field not in request.data for field in required_fields):
@@ -48,8 +46,8 @@ class ProfileViewSet(viewsets.ViewSet):
             gender = request.data.get('gender')
             if gender and gender not in ['M', 'F']:
                 return Response(
-                {'error': 'Invalid gender. Must be one of: M, F, O, N.'},
-                status=status.HTTP_400_BAD_REQUEST
+                    {'error': 'Invalid gender. Must be one of: M, F'},
+                    status=status.HTTP_400_BAD_REQUEST
                 )
             birth_date_str = request.data['birth_date']
             try:
@@ -59,11 +57,11 @@ class ProfileViewSet(viewsets.ViewSet):
                     {'error': 'Invalid birth_date format. Use YYYY-MM-DD.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-         
+
             category = self._calculate_category(birth_date)
 
+            # Create the profile without a parent
             child_profile = Profile.objects.create(
-                parent=request.user,
                 first_name=request.data['first_name'],
                 last_name=request.data['last_name'],
                 birth_date=birth_date,
@@ -71,13 +69,14 @@ class ProfileViewSet(viewsets.ViewSet):
                 evaluation_score=0,
                 objectives=[],
                 progress='En progrès',
-                recommended_strategies=[],  
+                recommended_strategies=[],
                 diagnosis=request.data.get('diagnosis', ''),
                 notes=request.data.get('notes', ''),
                 is_active=True,
                 category=category
             )
 
+            # Assign all permissions to the creator
             all_permissions = ['view', 'edit', 'share', 'delete']
             for perm in all_permissions:
                 SharedProfilePermission.objects.create(
@@ -97,20 +96,21 @@ class ProfileViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['get'], url_path='parent/(?P<parent_id>[^/.]+)')
-    def profiles_by_parent(self, request, parent_id):
-        """Retrieve all profiles associated with a specific parent ID."""
-        if not request.user.is_staff and str(request.user.id) != parent_id:
+    @action(detail=False, methods=['get'], url_path='user/(?P<user_id>[^/.]+)')
+    def profiles_by_user(self, request, user_id):
+        """Retrieve all profiles associated with a specific user ID via SharedProfilePermission."""
+        if not request.user.is_staff and str(request.user.id) != user_id:
             return Response(
                 {"error": "You are not authorized to view these profiles"},
                 status=status.HTTP_403_FORBIDDEN
             )
         try:
-            parent = CustomUser.objects.get(id=parent_id)
+            user = CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
-            return Response({"error": "Parent not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        profiles = Profile.objects.filter(parent=parent)
+        # Get profiles where the user has any permission
+        profiles = Profile.objects.filter(shared_with__shared_with=user).distinct()
         serializer = ProfileSerializer(profiles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -121,17 +121,16 @@ class ProfileViewSet(viewsets.ViewSet):
             child_profile = get_object_or_404(Profile, pk=pk)
 
             if not request.user.is_superuser:
-                if child_profile.parent != request.user:
-                    has_edit_permission = SharedProfilePermission.objects.filter(
-                        profile=child_profile,
-                        shared_with=request.user,
-                        permissions='edit'
-                    ).exists()
-                    if not has_edit_permission:
-                        return Response(
-                            {'error': 'You are not authorized to update this profile'},
-                            status=status.HTTP_403_FORBIDDEN
-                        )
+                has_edit_permission = SharedProfilePermission.objects.filter(
+                    profile=child_profile,
+                    shared_with=request.user,
+                    permissions='edit'
+                ).exists()
+                if not has_edit_permission:
+                    return Response(
+                        {'error': 'You are not authorized to update this profile'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
 
             if 'first_name' in request.data:
                 child_profile.first_name = request.data['first_name']
@@ -139,7 +138,6 @@ class ProfileViewSet(viewsets.ViewSet):
                 child_profile.last_name = request.data['last_name']
             if 'birth_date' in request.data:
                 birth_date_str = request.data['birth_date']
-          
                 try:
                     birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d').date()
                     child_profile.birth_date = birth_date
@@ -153,8 +151,8 @@ class ProfileViewSet(viewsets.ViewSet):
                 gender = request.data['gender']
                 if gender and gender not in ['M', 'F']:
                     return Response(
-                    {'error': 'Invalid gender. Must be one of: M, F'},
-                                status=status.HTTP_400_BAD_REQUEST
+                        {'error': 'Invalid gender. Must be one of: M, F'},
+                        status=status.HTTP_400_BAD_REQUEST
                     )
                 child_profile.gender = gender
             if 'diagnosis' in request.data:
@@ -178,26 +176,31 @@ class ProfileViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=['post'], url_path='share')
     def share_child_profile(self, request, pk=None):
-        """Share a child profile with another parent with specified permissions."""
         try:
             profile = get_object_or_404(Profile, pk=pk)
 
-            if not request.user.is_superuser and profile.parent != request.user:
-                return Response(
-                    {'error': 'You are not authorized to share this profile'},
-                    status=status.HTTP_403_FORBIDDEN
-                )
+            if not request.user.is_superuser:
+                has_share_permission = SharedProfilePermission.objects.filter(
+                    profile=profile,
+                    shared_with=request.user,
+                    permissions='share'
+                ).exists()
+                if not has_share_permission:
+                    return Response(
+                        {'error': 'You are not authorized to share this profile'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
 
-            required_fields = ['shared_with_username', 'permissions']
+            required_fields = ['shared_with_id', 'permissions']
             if any(field not in request.data for field in required_fields):
                 return Response(
                     {'error': f'Missing required fields: {", ".join(required_fields)}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            shared_with_username = request.data['shared_with_username']
+            shared_with_id = request.data['shared_with_id']
             try:
-                shared_with_user = CustomUser.objects.get(username=shared_with_username)
+                shared_with_user = CustomUser.objects.get(id=shared_with_id)
             except CustomUser.DoesNotExist:
                 return Response(
                     {'error': 'User to share with not found'},
@@ -226,7 +229,7 @@ class ProfileViewSet(viewsets.ViewSet):
                 )
 
             return Response(
-                {'message': f'Profile shared successfully with {shared_with_username}'},
+                {'message': f'Profile shared successfully with {shared_with_user.username}'},
                 status=status.HTTP_200_OK
             )
 
@@ -274,6 +277,33 @@ class ProfileViewSet(viewsets.ViewSet):
             serializer = ProfileSerializer(profiles, many=True)
             return Response(
                 {'message': 'Profiles retrieved successfully', 'data': serializer.data},
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['get'], url_path='get')
+    def get_by_id(self, request, pk=None):
+        """Retrieve a child profile by ID, respecting user permissions."""
+        try:
+            child_profile = get_object_or_404(Profile, pk=pk)
+
+            if not request.user.is_superuser:
+                has_view_permission = SharedProfilePermission.objects.filter(
+                    profile=child_profile,
+                    shared_with=request.user,
+                    permissions='view'
+                ).exists()
+                if not has_view_permission:
+                    return Response(
+                        {'error': 'You are not authorized to view this profile'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+
+            serializer = ProfileSerializer(child_profile)
+            return Response(
+                {'message': 'Profile retrieved successfully', 'data': serializer.data},
                 status=status.HTTP_200_OK
             )
 
