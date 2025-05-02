@@ -1,8 +1,5 @@
-from django.contrib.auth import login, logout
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status
-from django.core.mail import send_mail
-from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserSerializer
@@ -63,6 +60,7 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
 
 
+@permission_classes([AllowAny]) 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]

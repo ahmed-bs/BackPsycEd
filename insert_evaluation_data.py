@@ -1,0 +1,638 @@
+from django.db import transaction
+from template_data.models import TemplateCategory, TemplateDomain, TemplateItem
+
+def insert_evaluation_data():
+    """
+    Insert data from 'Grille évaluation tout petit 1 à 5ans' into the template tables.
+    """
+    with transaction.atomic():
+        # Create TemplateCategory
+        category, created = TemplateCategory.objects.get_or_create(
+            name="Grille évaluation tout petit 1 à 5ans",
+            defaults={'description': "Liste de contrôle du modèle d'intervention précoce de Denver pour jeunes enfants avec autisme (1 à 5 ans)."}
+        )
+
+        # Define domains and items by level
+        data = {
+            "Niveau 1": [
+                {
+                    "name": "Communication réceptive",
+                    "items": [
+                        {"name": "1", "description": "Se tourne vers l'origine des sons pour les localiser."},
+                        {"name": "2", "description": "Dirige son regard vers des sons drôles (ex. : bruits de pets, sifflements)."},
+                        {"name": "3", "description": "Se tourne vers la personne qui lui parle."},
+                        {"name": "4", "description": "Observe les images lorsqu'un adulte les désigne dans un livre."},
+                        {"name": "5", "description": "Suit la direction du doigt pour placer des objets dans des contenants ou assembler un puzzle."},
+                        {"name": "6", "description": "Regarde un objet lorsqu'on l'interpelle en disant : « X, regarde. »"},
+                        {"name": "7", "description": "Tourne la tête vers son partenaire lorsqu'il entend son nom."},
+                        {"name": "8", "description": "Suit la direction du doigt pour repérer un objet ou un lieu."},
+                        {"name": "9", "description": "Suit le geste de pointage pour aller chercher un jouet."},
+                        {"name": "10", "description": "Réagit en regardant, tendant les bras ou souriant aux gestes et à la voix de l'adulte dans les jeux sociaux."},
+                        {"name": "11", "description": "Réagit aux gestes et paroles de l'adulte dans les comptines en regardant, souriant, tendant les bras ou en imitant des gestes."},
+                        {"name": "12", "description": "S'arrête brièvement lorsqu'il entend un mot d'interdiction (ex. : « Non », « Arrête »)."},
+                        {"name": "13", "description": "Donne un objet demandé verbalement si l'adulte tend la main pour l'accompagner."},
+                        {"name": "14", "description": "Suit une consigne simple avec un geste ou une indication verbale (ex. : « Assieds-toi », « Viens ici », « Range »)."},
+                        {"name": "15", "description": "Suit une consigne verbale simple sans geste d'accompagnement (ex. : « Assieds-toi », « Viens ici », « Range »)."},
+                    ]
+                },
+                {
+                    "name": "Communication expressive",
+                    "items": [
+                        {"name": "1", "description": "Étend les bras vers une personne ou un objet pour exprimer une demande."},
+                        {"name": "2", "description": "Émet des sons de manière intentionnelle."},
+                        {"name": "3", "description": "Sollicite de l'aide en tendant un objet à l'adulte."},
+                        {"name": "4", "description": "Alterne les vocalisations avec un interlocuteur lors d'un échange."},
+                        {"name": "5", "description": "Manifeste son refus en repoussant un objet ou en le rendant à quelqu’un."},
+                        {"name": "6", "description": "Désigne un objet de près avec son doigt pour le demander."},
+                        {"name": "7", "description": "Regarde l’adulte pour obtenir un objet lorsque celui-ci bloque l’accès ou le retient."},
+                        {"name": "8", "description": "Désigne un objet du doigt pour faire un choix entre deux options."},
+                        {"name": "9", "description": "Accompagne son regard d’une vocalisation pour exprimer une demande."},
+                        {"name": "10", "description": "Désigne un objet éloigné du doigt pour le demander."},
+                        {"name": "11", "description": "Pointe du doigt à distance pour choisir entre deux objets."},
+                        {"name": "12", "description": "Babille en répétant des syllabes (CVCV), sans forcément former des mots."},
+                        {"name": "13", "description": "Utilise au moins cinq consonnes différentes dans ses vocalisations spontanées."},
+                        {"name": "14", "description": "Enchaîne des syllabes variées (CVCV avec des voyelles différentes) dans son babillage."},
+                    ]
+                },
+                {
+                    "name": "Compétences sociales",
+                    "items": [
+                        {"name": "1", "description": "Accepte de courtes interactions sociales impliquant des sensations et du contact."},
+                        {"name": "2", "description": "Utilise des gestes pour lancer ou poursuivre une activité sociale sensorielle."},
+                        {"name": "3", "description": "Établit un bref contact visuel avec une autre personne."},
+                        {"name": "4", "description": "Participe activement à une routine sociale sensorielle pendant environ 2 minutes."},
+                        {"name": "5", "description": "Réagit à ses objets ou activités préférés en regardant, en tendant les bras, en souriant ou en bougeant."},
+                        {"name": "6", "description": "Observe et interagit avec l’adulte qui l’imite dans un jeu parallèle avec des jouets."},
+                        {"name": "7", "description": "Connaît entre 5 et 10 jeux sociaux sensoriels."},
+                        {"name": "8", "description": "Réagit aux salutations en regardant ou en se tournant vers la personne."},
+                        {"name": "9", "description": "Répond aux salutations avec un geste ou une vocalisation."},
+                        {"name": "10", "description": "Échange des sourires avec son partenaire lors d’un jeu coordonné."},
+                    ]
+                },
+                {
+                    "name": "Imitation",
+                    "items": [
+                        {"name": "1", "description": "Reproduit 8 à 10 actions simples en utilisant des objets."},
+                        {"name": "2", "description": "Imite 10 gestes impliquant des parties visibles de son corps lors de chansons ou de jeux."},
+                        {"name": "3", "description": "Copie 6 mouvements touchant des parties moins visibles de son corps (tête, visage) dans des activités chantées ou ludiques."},
+                        {"name": "4", "description": "Reproduit 6 mouvements impliquant la bouche et le visage."},
+                    ]
+                },
+                {
+                    "name": "Cognition",
+                    "items": [
+                        {"name": "1", "description": "Regroupe ou classe des objets identiques."},
+                        {"name": "2", "description": "Associe ou trie des images identiques."},
+                        {"name": "3", "description": "Associe des images avec les objets correspondants."},
+                        {"name": "4", "description": "Trie les objets en fonction de leur couleur."},
+                    ]
+                },
+                {
+                    "name": "Jeu",
+                    "items": [
+                        {"name": "1", "description": "Ajuste son comportement en fonction de cinq objets différents."},
+                        {"name": "2", "description": "Joue seul et correctement avec 10 jouets nécessitant une action simple."},
+                        {"name": "3", "description": "Utilise de manière autonome des jouets demandant des actions répétitives sur différents objets (ex. : pyramide d’anneaux, gobelets empilables)."},
+                        {"name": "4", "description": "Adopte des comportements de jeu adaptés avec divers jouets simples (ex. : lancer une balle, empiler des cubes, insérer des bâtonnets dans des trous, faire rouler une voiture)."},
+                        {"name": "5", "description": "Joue seul avec des jouets nécessitant deux gestes différents (ex. : enlever, mettre dedans)."},
+                        {"name": "6", "description": "Manipule de manière autonome des jouets nécessitant plusieurs actions variées (ex. : insérer, ouvrir, retirer, fermer)."},
+                        {"name": "7", "description": "Utilise des objets pour réaliser des actions habituelles sur lui-même."},
+                        {"name": "8", "description": "Termine son jeu et le remet à sa place."},
+                    ]
+                },
+                {
+                    "name": "Motricité fine",
+                    "items": [
+                        {"name": "1", "description": "Insère une ou deux formes dans un trieur."},
+                        {"name": "2", "description": "Empile des anneaux sur leur socle."},
+                        {"name": "3", "description": "Assemble trois pièces d’un puzzle avec des poignées en bois."},
+                        {"name": "4", "description": "Insère des bâtonnets dans une planche percée de trous."},
+                        {"name": "5", "description": "Appuie sur les boutons de cinq jouets à effet sonore ou lumineux."},
+                        {"name": "6", "description": "Sépare des perles emboîtables ou des briques Duplo."},
+                        {"name": "7", "description": "Saisit les objets avec une pince digitale ou trois doigts selon leur taille et leur forme."},
+                        {"name": "8", "description": "Empile trois gros cubes ou gobelets pour former une tour."},
+                        {"name": "9", "description": "Trace des marques, lignes, gribouillages et points avec des feutres ou crayons de couleur."},
+                        {"name": "10", "description": "Frappe avec un marteau jouet sur des balles ou chevilles."},
+                        {"name": "11", "description": "Ramasse avec une pelle, ratisse et verse du sable, de l’eau ou du riz."},
+                        {"name": "12", "description": "Empile de grosses briques Lego."},
+                    ]
+                },
+                {
+                    "name": "Motricité globale",
+                    "items": [
+                        {"name": "1", "description": "Frappe un gros ballon avec le pied."},
+                        {"name": "2", "description": "Monte et descend des marches avec appui, sans alterner les pieds."},
+                        {"name": "3", "description": "Grimpe sur un ou deux barreaux de l’échelle d’un toboggan."},
+                        {"name": "4", "description": "Monte et descend sur des meubles."},
+                        {"name": "5", "description": "Réagit pour se stabiliser lorsqu’il perd l’équilibre."},
+                        {"name": "6", "description": "Évite les obstacles au sol au lieu de marcher dessus."},
+                        {"name": "7", "description": "Lance une balle ou un sac de graines dans une direction."},
+                        {"name": "8", "description": "Fait rouler une balle vers quelqu’un et la reçoit en retour."},
+                    ]
+                },
+                {
+                    "name": "Comportement",
+                    "items": [
+                        {"name": "1", "description": "Présente seulement quelques difficultés sévères du comportement."},
+                        {"name": "2", "description": "Reste assis sur une chaise ou en face de l’adulte pendant une activité agréable sans difficulté pendant 1 à 2 minutes."},
+                        {"name": "3", "description": "Participe volontiers à des jeux simples avec l’adulte, assis sur une chaise ou au sol, pendant 5 minutes."},
+                        {"name": "4", "description": "Accepte la présence et l’interaction de l’adulte, avec peu de sollicitations, sans comportement problématique pendant 20 minutes."},
+                        {"name": "5", "description": "Interagit de manière appropriée avec les membres de sa famille, sans agressivité ni comportements inadaptés."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : repas",
+                    "items": [
+                        {"name": "1", "description": "Prend ses repas et ses collations à table."},
+                        {"name": "2", "description": "Mange de façon autonome."},
+                        {"name": "3", "description": "Boit dans un verre."},
+                        {"name": "4", "description": "Mange avec une cuillère."},
+                        {"name": "5", "description": "Utilise une fourchette."},
+                        {"name": "6", "description": "Consomme des aliments de textures, types et groupes variés."},
+                        {"name": "7", "description": "Accepte la présence de nouveaux aliments dans son assiette."},
+                        {"name": "8", "description": "Boit avec une paille."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : habillage",
+                    "items": [
+                        {"name": "9", "description": "Retire tous ses vêtements avec assistance."},
+                        {"name": "10", "description": "Enfile tous ses vêtements avec aide."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : toilette",
+                    "items": [
+                        {"name": "11", "description": "Passe ses mains sous l’eau du robinet."},
+                        {"name": "12", "description": "S’essuie les mains avec une serviette."},
+                        {"name": "13", "description": "Se lave en se frottant avec un gant de toilette ou une serviette."},
+                        {"name": "14", "description": "Accepte le peigne ou la brosse pour se coiffer."},
+                        {"name": "15", "description": "Participe au brossage en utilisant une brosse à cheveux ou un peigne."},
+                        {"name": "16", "description": "Porte la brosse à dents à sa bouche."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : tâches ménagères",
+                    "items": [
+                        {"name": "17", "description": "Dépose ses vêtements sales dans le panier à linge."},
+                        {"name": "18", "description": "Jette ses papiers à la poubelle."},
+                    ]
+                },
+            ],
+            "Niveau 2": [
+                {
+                    "name": "Communication réceptive",
+                    "items": [
+                        {"name": "1", "description": "Respecte les consignes « arrête » ou « attends » sans aide gestuelle ou physique."},
+                        {"name": "2", "description": "Suit 8 à 10 consignes verbales simples impliquant des gestes ou des actions sur des objets."},
+                        {"name": "3", "description": "Montre plusieurs parties du corps sur lui-même ou sur une autre personne lorsqu’elles sont nommées."},
+                        {"name": "4", "description": "Répond à une consigne en donnant, montrant ou pointant 8 à 10 objets spécifiques lors du jeu, de l’habillage ou des repas (ex. : bébé, chaise, voiture, cube, verre, ours)."},
+                        {"name": "5", "description": "Désigne et regarde trois images nommées dans un livre (ex. : verre, voiture, chien, chat, bébé)."},
+                        {"name": "6", "description": "Comprend les premières notions spatiales comme « dans » et « sur »."},
+                        {"name": "7", "description": "Regarde les personnes ou leurs photos lorsqu’on les nomme (famille, animaux, enseignants)."},
+                        {"name": "8", "description": "Sur demande, retrouve 8 à 10 objets présents dans la pièce mais non visibles immédiatement, nécessitant une petite recherche."},
+                        {"name": "9", "description": "Réalise deux actions avec un objet lorsqu'on lui donne une consigne verbale accompagnée de gestes."},
+                        {"name": "10", "description": "Désigne les parties nommées d’une image du doigt."},
+                    ]
+                },
+                {
+                    "name": "Communication expressive",
+                    "items": [
+                        {"name": "1", "description": "Associe des signes ou des gestes à des vocalisations pour communiquer (demander, signaler la fin, partager, demander de l’aide, exprimer un désaccord)."},
+                        {"name": "2", "description": "Dit entre 6 et 10 mots ou approximations dans des routines familières, des jeux sensoriels ou des chansons."},
+                        {"name": "3", "description": "Utilise spontanément plusieurs mots liés à une routine de jeu (ex. : « roule », « vas-y », « stop »)."},
+                        {"name": "4", "description": "Emploie au moins 20 mots approximatifs pour nommer des objets, animaux, personnes et exprimer des actions ou relations (ex. : « c’est fini », « en haut »)."},
+                        {"name": "5", "description": "Nomme spontanément des objets et des images."},
+                        {"name": "6", "description": "Vocalise avec des intonations variées pendant les chansons."},
+                        {"name": "7", "description": "Exprime des demandes et des refus avec des mots simples et un contact visuel."},
+                        {"name": "8", "description": "Nomme des actions en contexte (ex. : mouvements du corps ou actions avec des objets)."},
+                        {"name": "9", "description": "Donne approximativement les noms de trois personnes importantes, y compris lui-même."},
+                        {"name": "10", "description": "Secoue la tête et dit « non » for refuser."},
+                        {"name": "11", "description": "Hoche la tête et dit « oui » pour approuver."},
+                        {"name": "12", "description": "Demande approximativement « Qu’est-ce que c’est ? » face à un nouvel objet ou une situation inconnue."},
+                    ]
+                },
+                {
+                    "name": "Comportements d'attention conjointe",
+                    "items": [
+                        {"name": "1", "description": "Répond à « Regarde » quand on lui offre un objet par un changement de direction du regard, en se retournant et en regardant l'objet offert."},
+                        {"name": "2", "description": "Répond à « Regarde » quand on pointe un objet/une personne à distance, en s'orientant vers l'objet/la personne indiqué."},
+                        {"name": "3", "description": "Donne ou prend un objet à une autre personne de façon coordonnée avec le contact visuel."},
+                        {"name": "4", "description": "Tends un objet à l’adulte lorsqu’on lui dit « Montre-moi »."},
+                        {"name": "5", "description": "Montre spontanément des objets."},
+                        {"name": "6", "description": "Suit le regard ou le geste de pointage sans indication verbale pour observer une cible."},
+                        {"name": "7", "description": "Pointe spontanément du doigt les objets qui l’intéressent."},
+                        {"name": "8", "description": "Échange des sourires avec l’adulte en alternant le regard lors d’une activité agréable."},
+                    ]
+                },
+                {
+                    "name": "Compétences sociales : adultes ou pairs",
+                    "items": [
+                        {"name": "1", "description": "Établit et maintient le contact visuel pour communiquer."},
+                        {"name": "2", "description": "Demande verbalement ou initie physiquement un jeu social familier."},
+                        {"name": "3", "description": "Réagit aux gestes d’affection en étreignant ou embrassant les personnes familières."},
+                        {"name": "4", "description": "Utilise des gestes ou des mots pour capter l’attention de l’adulte."},
+                        {"name": "5", "description": "Répond aux salutations sociales en disant « Bonjour » et « Au revoir » ou en imitant un geste de la main."},
+                        {"name": "6", "description": "Demande de l’aide verbalement ou par des gestes."},
+                        {"name": "7", "description": "Coordonne régulièrement le contact visuel avec des vocalisations et/ou des gestes pour interagir."},
+                        {"name": "8", "description": "Danse avec une autre personne dans un jeu de ronde musicale."},
+                        {"name": "9", "description": "Court avec une autre personne dans un jeu de « trap-trap »."},
+                        {"name": "10","description": "Appelle son partenaire de communication par son nom ou en nommant l’activité pour initier un jeu social."},
+                    ]
+                },
+                {
+                    "name": "Compétences sociales avec des pairs",
+                    "items": [
+                        {"name": "11", "description": "Remet un objet à un camarade lorsqu’on le lui demande."},
+                        {"name": "12", "description": "Participe à des chansons et à des jeux de doigts familiers en groupe."},
+                        {"name": "13", "description": "Poursuit son activité lorsqu’un camarade le rejoint dans un jeu parallèle."},
+                        {"name": "14", "description": "Répond de manière appropriée aux salutations d’un camarade."},
+                        {"name": "15", "description": "Alterne les actions avec un camarade en donnant et prenant un jouet à tour de rôle."},
+                        {"name": "16", "description": "S’assoit en groupe avec ses pairs et écoute les consignes familières d’un adulte."},
+                        {"name": "17", "description": "Prend un objet lorsqu’un camarade le lui offre."},
+                        {"name": "18", "description": "Donne des objets à ses camarades à table ou en groupe lorsqu’on le lui demande."},
+                        {"name": "19", "description": "Reproduit occasionnellement le comportement d’un camarade lors d’activités de jeu."},
+                        {"name": "20", "description": "Joue seul ou avec un camarade à des jeux d’appariement d’images (ex. : Loto, Memory)."},
+                    ]
+                },
+                {
+                    "name": "Imitation",
+                    "items": [
+                        {"name": "1", "description": "Reproduit diverses voyelles et consonnes dans des tentatives verbales lors d’échanges significatifs."},
+                        {"name": "2", "description": "Imite des bruits d’animaux et autres sons."},
+                        {"name": "3", "description": "Répète spontanément et fréquemment des mots simples reconnaissables lors des interactions."},
+                        {"name": "4", "description": "Reproduit les mouvements de cinq comptines et au moins dix actions différentes."},
+                        {"name": "5", "description": "Imite approximativement de nouvelles actions dans des chansons."},
+                        {"name": "6", "description": "Reproduit des actions à plusieurs étapes avec des objets dans un jeu."},
+                        {"name": "7", "description": "Imite des actions de jeu de faire-semblant sur lui-même et sur un partenaire avec des objets miniatures."},
+                        {"name": "8", "description": "Reproduit deux séquences de mouvements dans des routines de chanson ou de jeu."},
+                        {"name": "9", "description": "Imite des phrases courtes de deux mots."},
+                    ]
+                },
+                {
+                    "name": "Cognition",
+                    "items": [
+                        {"name": "1", "description": "Associe et trie les objets par forme."},
+                        {"name": "2", "description": "Regroupe et trie les objets par taille."},
+                        {"name": "3", "description": "Associe et trie des motifs et des dessins."},
+                        {"name": "4", "description": "Classe des objets similaires en groupes."},
+                        {"name": "5", "description": "Trie des objets du quotidien selon leur fonction."},
+                        {"name": "6", "description": "Cherche/demande un objet disparu."},
+                        {"name": "7", "description": "Associe et trie des objets en fonction de deux critères."},
+                        {"name": "8", "description": "Regroupe des objets selon leur quantité de un à trois."},
+                    ]
+                },
+                {
+                    "name": "Jeu : jeu symbolique",
+                    "items": [
+                        {"name": "1", "description": "Associe des objets liés dans un jeu (ex. : met une tasse sur une soucoupe, utilise une cuillère dans un plat)."},
+                        {"name": "2", "description": "Reproduit des effets sonores en jouant (ex. : parle dans un téléphone, imite le bruit d’une voiture ou d’un animal)."},
+                        {"name": "3", "description": "Réalise une action simple avec un accessoire sur une poupée ou un animal."},
+                        {"name": "4", "description": "Combine des actions liées fonctionnellement dans un thème de jeu (nourrit et donne à boire, met au lit et borde)."},
+                        {"name": "5", "description": "Présente une approche par essais et erreurs pour résoudre un problème avec des jeux de construction ; les schémas sont flexibles, non répétitifs."},
+                    ]
+                },
+                {
+                    "name": "Jeu : jeu autonome",
+                    "items": [
+                        {"name": "6", "description": "Joue de manière adaptée et variée pendant 10 minutes avec une supervision occasionnelle de l’adulte."},
+                        {"name": "7", "description": "Peut s’occuper seul de façon appropriée avec du matériel non structuré pendant au moins 10 minutes, avec une guidance occasionnelle."},
+                        {"name": "8", "description": "Prend le matériel, l’apporte à la table, joue avec, puis le range."},
+                    ]
+                },
+                {
+                    "name": "Motricité fine",
+                    "items": [
+                        {"name": "1", "description": "Place correctement trois formes ou plus dans un trieur de formes."},
+                        {"name": "2", "description": "Empile entre 8 et 10 cubes d’environ 2 cm."},
+                        {"name": "3", "description": "Reproduit des modèles simples avec au moins trois cubes."},
+                        {"name": "4", "description": "Assemble au moins cinq Duplos, perles emboîtables, jouets de construction ou éléments à ergots de différentes manières."},
+                        {"name": "5", "description": "Imite au moins cinq actions simples avec de la pâte à modeler (rouler, piquer, tapoter, pincer)."},
+                        {"name": "6", "description": "Colle plusieurs gommettes sur une feuille."},
+                        {"name": "7", "description": "Ouvre et ferme différents types de récipients, y compris ceux avec des couvercles à visser."},
+                        {"name": "8", "description": "Manipule une grande fermeture éclair pour l’ouvrir et la fermer."},
+                        {"name": "9", "description": "Enfile de gros objets sur une corde, une ficelle épaisse ou une paille."},
+                        {"name": "10", "description": "Reproduit des traits, des gribouillages et des points avec un feutre ou un crayon de couleur."},
+                        {"name": "11", "description": "Découpe du papier avec des ciseaux."},
+                        {"name": "12", "description": "Glisse des jetons ou des pièces dans une fente."},
+                        {"name": "13", "description": "Enfile différentes perles sur divers types de ficelles."},
+                        {"name": "14", "description": "Assemble des puzzles simples de 4 à 6 pièces à encastrer."},
+                    ]
+                },
+                {
+                    "name": "Motricité globale",
+                    "items": [
+                        {"name": "1", "description": "Reproduit des mouvements globaux dans différentes positions (assis, debout, en mouvement)."},
+                        {"name": "2", "description": "Saute d’une marche et franchit des obstacles au sol."},
+                        {"name": "3", "description": "Explore certains équipements de la cour de récréation (grimpe, glisse)."},
+                        {"name": "4", "description": "S’assoit sur un tricycle et avance en poussant avec les pieds ou en commençant à pédaler."},
+                        {"name": "5", "description": "Tire un chariot ou pousse une brouette."},
+                        {"name": "6", "description": "Frappe un ballon du pied en visant une cible."},
+                        {"name": "7", "description": "Creuse avec une pelle."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : repas",
+                    "items": [
+                        {"name": "1", "description": "Utilise une serviette lorsqu'on le lui demande."},
+                        {"name": "2", "description": "Se sert seul de nourriture avec des couverts dans un saladier."},
+                        {"name": "3", "description": "Passe des récipients lorsqu'on le lui demande."},
+                        {"name": "4", "description": "Porte son assiette, son verre et ses couverts à l'évier ou sur le comptoir après le repas."},
+                        {"name": "5", "description": "Reste assis à table avec une autre personne pendant toute la durée de son repas."},
+                        {"name": "6", "description": "Mange et se comporte de manière appropriée dans un restaurant fast-food."},
+                        {"name": "7", "description": "Touche ou goûte un nouvel aliment qui lui a été présenté à plusieurs reprises."},
+                        {"name": "8", "description": "Mange des aliments provenant de tous les groupes alimentaires."},
+                        {"name": "9", "description": "Se sert un verre d'eau de manière autonome."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : habillage",
+                    "items": [
+                        {"name": "10", "description": "Retire tous ses vêtements (sans attaches) de manière autonome et les place dans le panier à linge."},
+                        {"name": "11", "description": "Réalise quelques étapes pour enfiler ses vêtements seul (avec aide pour les attaches)."},
+                        {"name": "12", "description": "Enlève sa veste et son chapeau (sans attaches) et les accroche à un porte-manteau."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : hygiène",
+                    "items": [
+                        {"name": "13", "description": "S’essuie le visage avec un gant humide sur demande."},
+                        {"name": "14", "description": "S’essuie le nez sur demande."},
+                        {"name": "15", "description": "Participe à toutes les étapes du lavage des mains."},
+                        {"name": "16", "description": "Coopère pour le shampooing et la coupe de cheveux."},
+                        {"name": "17", "description": "Joue de manière appropriée avec cinq jouets de bain."},
+                        {"name": "18", "description": "Range les jouets de bain sur demande."},
+                        {"name": "19", "description": "Aide à appliquer de la crème."},
+                        {"name": "20", "description": "Se brosse les dents seul avec une brosse à dents."},
+                        {"name": "21", "description": "Va au lit de façon autonome après le rituel du coucher."},
+                        {"name": "22", "description": "Montre qu’il connaît la séquence de la routine du coucher."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : tâches ménagères",
+                    "items": [
+                        {"name": "23", "description": "Trie les couverts du lave-vaisselle et les range dans le tiroir à compartiments."},
+                        {"name": "24", "description": "Vide le sèche-linge dans une corbeille."},
+                        {"name": "25", "description": "Apparie ses chaussettes."},
+                        {"name": "26", "description": "Verse de l'eau ou de la nourriture dans la gamelle de l'animal de compagnie."},
+                    ]
+                },
+            ],
+            "Niveau 3": [
+                {
+                    "name": "Communication réceptive",
+                    "items": [
+                        {"name": "1", "description": "Suit deux consignes ou plus sans rapport l'une avec l'autre dans un contexte nouveau."},
+                        {"name": "2", "description": "Identifie des objets par leur fonction (ex. : « Montre-moi celui avec lequel on coupe »)."},
+                        {"name": "3", "description": "Comprend des concepts spatiaux comme « sous », « derrière », « à côté »."},
+                        {"name": "4", "description": "Reconnaît des objets ou des images en fonction de leur catégorie (ex. : animaux, vêtements, aliments)."},
+                        {"name": "5", "description": "Suit des consignes impliquant des actions séquentielles (ex. : « Mets le cube dans la boîte, puis donne-moi la balle »)."},
+                    ]
+                },
+                {
+                    "name": "Communication expressive",
+                    "items": [
+                        {"name": "1", "description": "Forme des phrases de 2 à 3 mots pour exprimer différentes intentions, comme demander, saluer, attirer l’attention ou refuser."},
+                        {"name": "2", "description": "Utilise au moins deux mots pour faire un commentaire destiné à quelqu’un."},
+                        {"name": "3", "description": "Nomme les actions représentées sur des images ou dans des livres."},
+                        {"name": "4", "description": "Fait des remarques ou pose des questions sur la position des objets (ex. : en haut, en bas, dans, sur)."},
+                        {"name": "5", "description": "Utilise des mots pour indiquer la possession, comme « le mien » ou « le tien »."},
+                        {"name": "6", "description": "Exprime « Je ne sais pas » en parlant ou en mimant."},
+                        {"name": "7", "description": "Dit le prénom des autres pour attirer leur attention."},
+                        {"name": "8", "description": "Transmet un message simple à une autre personne (ex. : « Va dire bonjour à papa »)."},
+                        {"name": "9", "description": "Dit « bonjour » et « au revoir » spontanément ou en réponse à quelqu’un."},
+                        {"name": "10", "description": "Utilise les pronoms « moi » et « toi » pour parler de lui-même et des autres."},
+                        {"name": "11", "description": "Décrit ses expériences avec des mots et des gestes."},
+                        {"name": "12", "description": "Nomme une ou deux couleurs."},
+                        {"name": "13", "description": "Répond correctement aux questions « quel ? », « quoi ? » et « qui ? »."},
+                        {"name": "14", "description": "Répond correctement aux questions « où ? »."},
+                        {"name": "15", "description": "Pose des questions simples avec une intonation montante, même avec un seul mot (ex. : « encore ? », « dodo ? »)."},
+                        {"name": "16", "description": "Pose des questions simples dont la réponse est « oui » ou « non » en utilisant une intonation interrogative."},
+                        {"name": "17", "description": "Pose des questions « quoi, quel ? » et « où ? »."},
+                        {"name": "18", "description": "Répond à des questions simples sur lui-même, comme son nom, son âge ou la couleur de son tee-shirt."},
+                    ]
+                },
+                {
+                    "name": "Compétences sociales : adultes ou pairs",
+                    "items": [
+                        {"name": "1", "description": "Participe à des jeux de motricité globale simples comme jouer au ballon, cache-cache ou aux rondes en chanson."},
+                        {"name": "2", "description": "Partage et montre un objet lorsqu'on le lui demande."},
+                        {"name": "3", "description": "Imite et reproduit de nouvelles chansons ou jeux de doigts en groupe."},
+                        {"name": "4", "description": "Réagit correctement aux consignes simples données par d'autres enfants."},
+                        {"name": "5", "description": "Initie des échanges et imite les actions de ses camarades."},
+                        {"name": "6", "description": "Participe à des jeux parallèles et suit des routines de jeu avec ses pairs."},
+                        {"name": "7", "description": "Respecte le tour de jeu dans des jeux de société simples."},
+                        {"name": "8", "description": "Utilise des mots de politesse comme « s'il te plaît », « merci » et « excuse-moi »."},
+                        {"name": "9", "description": "Imite différents mouvements en position debout ou en déplacement, comme dans le jeu « Suivez le guide » ou en reproduisant la démarche d’animaux."},
+                        {"name": "10", "description": "Prend part à des jeux basés sur de petits scénarios verbaux."},
+                        {"name": "11", "description": "Attire souvent l’attention des autres en pointant ou en parlant pour montrer, partager ou demander quelque chose."},
+                        {"name": "12", "description": "Répond aux sollicitations des autres en regardant et en commentant ce qu’ils montrent."},
+                        {"name": "13", "description": "Reconnaît les émotions chez les autres (joie, tristesse, colère, peur) en regardant des photos ou des dessins."},
+                        {"name": "14", "description": "Exprime lui-même des émotions en observant des images ou des situations."},
+                        {"name": "15", "description": "Montre ses émotions sur son visage (joie, tristesse, colère, peur)."},
+                    ]
+                },
+                {
+                    "name": "Cognition",
+                    "items": [
+                        {"name": "1", "description": "Associe les lettres de son prénom."},
+                        {"name": "2", "description": "Associe des lettres entre elles."},
+                        {"name": "3", "description": "Associe des mots."},
+                        {"name": "4", "description": "Associe des chiffres."},
+                        {"name": "5", "description": "Identifie de manière réceptive et expressive certaines lettres, chiffres, formes et couleurs."},
+                        {"name": "6", "description": "Joue à des jeux qui impliquent la permanence de l'objet."},
+                        {"name": "7", "description": "Classe des objets ou des images en huit catégories."},
+                        {"name": "8", "description": "Comprend la relation entre les chiffres et les quantités jusqu'à 5."},
+                        {"name": "9", "description": "Compte correctement le nombre d'objets jusqu'à cinq."},
+                        {"name": "10", "description": "Classe trois images ou plus dans le bon ordre et raconte la séquence en utilisant des expressions comme « d'abord, ensuite »."},
+                    ]
+                },
+                {
+                    "name": "Jeu",
+                    "items": [
+                        {"name": "1", "description": "Crée des structures complexes en utilisant plusieurs objets coordonnés, comme des camions sur une route, des blocs pour construire des bâtiments ou des perles pour faire un collier."},
+                        {"name": "2", "description": "Enchaîne trois actions ou plus dans une séquence de jeu."},
+                        {"name": "3", "description": "Exécute deux actions liées entre elles ou plus sur une poupée ou un animal lorsqu'on le lui demande."},
+                        {"name": "4", "description": "Place correctement des figurines sur des meubles miniatures, des véhicules, etc."},
+                        {"name": "5", "description": "Effectue spontanément des actions avec des poupées ou des figurines d'animaux."},
+                        {"name": "6", "description": "Dispose les accessoires en fonction du thème du jeu."},
+                    ]
+                },
+                {
+                    "name": "Motricité fine",
+                    "items": [
+                        {"name": "1", "description": "Complète un puzzle de cinq à six pièces qui s'assemblent."},
+                        {"name": "2", "description": "Imite le dessin d'un cercle, d'une croix, d’un carré, d'une diagonale."},
+                        {"name": "3", "description": "Imite et réalise des constructions avec divers éléments (cubes, Lego, jeux de construction, etc.)."},
+                        {"name": "4", "description": "Enfile un lacet dans un jeu de lacet."},
+                        {"name": "5", "description": "Trace des lignes et des courbes avec le doigt ou un outil d’écriture."},
+                        {"name": "6", "description": "Utilise différents ustensiles pour soulever et poser des objets, comme des pinces ou une fourchette."},
+                        {"name": "7", "description": "Trace une variété de formes."},
+                        {"name": "8", "description": "Tient et utilise correctement des ciseaux en maintenant le papier avec l'autre main pour le tourner."},
+                        {"name": "9", "description": "Découpe le long de lignes droites et courbes."},
+                        {"name": "10", "description": "Réalise des projets artistiques simples en deux étapes (ex. : découper et coller, tamponner à l’encre, plier et découper le papier)."},
+                        {"name": "11", "description": "Crée plusieurs motifs différents avec de la pâte à modeler, en utilisant divers ustensiles."},
+                    ]
+                },
+                {
+                    "name": "Motricité globale",
+                    "items": [
+                        {"name": "1", "description": "Conduit un tricycle correctement, en pédalant et en dirigeant, tout en suivant un parcours."},
+                        {"name": "2", "description": "Donne un coup de pied correctement en gardant son équilibre."},
+                        {"name": "3", "description": "Utilise tous les équipements de la cour de récréation avec des supports."},
+                        {"name": "4", "description": "Participe à des jeux de poursuite avec des adultes et des pairs, en courant et en changeant de direction sans perdre l'équilibre."},
+                        {"name": "5", "description": "Imite des mouvements de motricité globale associés à de la musique et des chansons."},
+                        {"name": "6", "description": "Envoie un objet sous la forme d'un lancer 'à la cuillère' vers une cible."},
+                        {"name": "7", "description": "Saute en avant les pieds joints."},
+                        {"name": "8", "description": "Saute à cloche-pied."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle",
+                    "items": [
+                        {"name": "1", "description": "Utilise correctement une cuillère, une fourchette et un verre sans renverser."},
+                        {"name": "2", "description": "Se comporte correctement en restant assis au restaurant."},
+                        {"name": "3", "description": "Utilise de manière autonome des pictogrammes ou d'autres systèmes de symboles pour faire des choix ou suivre des programmes à l'école et à la maison."},
+                        {"name": "4", "description": "Transporte seul ses affaires de la voiture à l'école et à la maison."},
+                        {"name": "5", "description": "Ouvre et ferme son sac à dos seul, et met ou sort des objets quand on lui demande."},
+                        {"name": "6", "description": "S'habille et se déshabille de manière appropriée (ouvre une fermeture éclair, défait un bouton pression)."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : hygiène",
+                    "items": [
+                        {"name": "7", "description": "Utilise les toilettes de manière autonome pour toutes les étapes, qu'on l'accompagne ou non."},
+                        {"name": "8", "description": "Gère ses vêtements aux toilettes, sauf pour les boutons et attaches."},
+                        {"name": "9", "description": "Réalise toutes les étapes du lavage des mains de manière autonome."},
+                        {"name": "10", "description": "Se frotte le visage avec un gant de toilette tiède lorsqu'on le lui tend."},
+                        {"name": "11", "description": "Se brosse les cheveux avec une brosse ou un peigne."},
+                        {"name": "12", "description": "Se couvre la bouche lorsqu'il tousse ou éternue."},
+                        {"name": "13", "description": "Aide activement pour son bain et pour s'essuyer à la fin."},
+                        {"name": "14", "description": "Se brosse les dents en utilisant la brosse à dents, avec au moins quelques coups de brosse."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : tâches ménagères",
+                    "items": [
+                        {"name": "15", "description": "Nourrit et donne à boire à un animal de compagnie."},
+                        {"name": "16", "description": "Aide à débarrasser la table."},
+                        {"name": "17", "description": "Aide à vider le lave-vaisselle."},
+                        {"name": "18", "description": "Range ses vêtements propres dans les tiroirs."},
+                        {"name": "19", "description": "Ramasse ses affaires lorsqu'on lui demande."},
+                    ]
+                },
+            ],
+            "Niveau 4": [
+                {
+                    "name": "Communication réceptive",
+                    "items": [
+                        {"name": "1", "description": "Comprend différents concepts sur les relations physiques des objets."},
+                        {"name": "2", "description": "Retrouve 10 à 15 éléments en utilisant deux ou trois critères différents (comme la taille, la couleur, le nom, etc.)."},
+                        {"name": "3", "description": "Comprend le genre des mots (masculin/féminin)."},
+                        {"name": "4", "description": "Suit des consignes complexes avec plusieurs étapes sans aide gestuelle."},
+                        {"name": "5", "description": "Identifie des objets ou images par des descriptions abstraites (ex. : « quelque chose de doux »)."},
+                    ]
+                },
+                {
+                    "name": "Communication expressive",
+                    "items": [
+                        {"name": "1", "description": "Forme des phrases de 4 mots ou plus pour exprimer des idées ou des demandes."},
+                        {"name": "2", "description": "Utilise des connecteurs comme « et », « mais », « parce que » dans ses phrases."},
+                        {"name": "3", "description": "Raconte une courte histoire ou un événement avec un début, un milieu et une fin."},
+                        {"name": "4", "description": "Pose des questions complexes avec « pourquoi ? » ou « comment ? »."},
+                        {"name": "5", "description": "Utilise des adjectifs pour décrire des objets ou des situations (ex. : grand, petit, chaud)."},
+                        {"name": "6", "description": "Exprime des préférences et explique pourquoi il préfère quelque chose."},
+                        {"name": "7", "description": "Participe à une conversation en posant des questions et en répondant de manière pertinente."},
+                    ]
+                },
+                {
+                    "name": "Compétences sociales",
+                    "items": [
+                        {"name": "1", "description": "Initie des jeux coopératifs avec des pairs sans intervention adulte."},
+                        {"name": "2", "description": "Partage spontanément des objets ou des jouets avec d'autres enfants."},
+                        {"name": "3", "description": "Participe à des jeux de rôle avec des scénarios élaborés."},
+                        {"name": "4", "description": "Résout des conflits simples avec des pairs en utilisant des mots."},
+                        {"name": "5", "description": "Exprime de l'empathie envers les autres (ex. : console un camarade triste)."},
+                    ]
+                },
+                {
+                    "name": "Cognition",
+                    "items": [
+                        {"name": "1", "description": "Reconnaît et nomme les lettres de l’alphabet."},
+                        {"name": "2", "description": "Compte jusqu’à 10 et associe les nombres aux quantités."},
+                        {"name": "3", "description": "Résout des problèmes simples de mathématiques (ex. : ajouter ou retirer un objet)."},
+                        {"name": "4", "description": "Comprend les concepts de temps comme « hier », « aujourd’hui », « demain »."},
+                        {"name": "5", "description": "Classe des objets selon des critères abstraits (ex. : choses vivantes/non vivantes)."},
+                    ]
+                },
+                {
+                    "name": "Jeu",
+                    "items": [
+                        {"name": "1", "description": "Crée des scénarios de jeu complexes avec plusieurs personnages et objets."},
+                        {"name": "2", "description": "Participe à des jeux de société avec des règles simples."},
+                        {"name": "3", "description": "Planifie une séquence de jeu avant de commencer."},
+                        {"name": "4", "description": "Adapte son jeu en fonction des actions d’un partenaire."},
+                    ]
+                },
+                {
+                    "name": "Motricité fine",
+                    "items": [
+                        {"name": "1", "description": "Écrit son prénom avec un crayon."},
+                        {"name": "2", "description": "Dessine des formes complexes comme un triangle ou une étoile."},
+                        {"name": "3", "description": "Utilise des outils comme une règle pour tracer des lignes droites."},
+                        {"name": "4", "description": "Attache des boutons et ferme des fermetures éclair seul."},
+                        {"name": "5", "description": "Réalise des projets manuels complexes (ex. : origami simple, collage élaboré)."},
+                    ]
+                },
+                {
+                    "name": "Motricité globale",
+                    "items": [
+                        {"name": "1", "description": "Court en changeant de direction rapidement sans perdre l’équilibre."},
+                        {"name": "2", "description": "Saute à la corde ou fait des sauts alternés."},
+                        {"name": "3", "description": "Participe à des jeux sportifs simples comme le soccer ou le basketball."},
+                        {"name": "4", "description": "Grimpe sur des structures complexes sans aide."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle",
+                    "items": [
+                        {"name": "1", "description": "Prépare une collation simple (ex. : tartine de beurre, céréales)."},
+                        {"name": "2", "description": "S’habille complètement seul, y compris les attaches."},
+                        {"name": "3", "description": "Suit une routine quotidienne sans rappels constants."},
+                        {"name": "4", "description": "Utilise les toilettes de manière totalement autonome, y compris pour s’essuyer."},
+                        {"name": "5", "description": "Se lave les mains et le visage sans aide."},
+                    ]
+                },
+                {
+                    "name": "Autonomie personnelle : tâches ménagères",
+                    "items": [
+                        {"name": "1", "description": "Fait son lit de manière simple."},
+                        {"name": "2", "description": "Balaye ou passe l’aspirateur sur une petite surface."},
+                        {"name": "3", "description": "Aide à préparer un repas simple (ex. : mélanger des ingrédients)."},
+                        {"name": "4", "description": "Range ses jouets et affaires personnelles sans aide."},
+                    ]
+                },
+            ]
+        }
+
+        # Insert data into the database
+        for level, domains in data.items():
+            for domain_data in domains:
+                domain, created = TemplateDomain.objects.get_or_create(
+                    template_category=category,
+                    name=domain_data["name"],
+                    level=level,
+                    defaults={'description': f"{domain_data['name']} - {level}"}
+                )
+                for item_data in domain_data["items"]:
+                    TemplateItem.objects.get_or_create(
+                        template_domain=domain,
+                        name=item_data["name"],
+                        defaults={
+                            'description': item_data["description"],
+                            'code': 'X'
+                        }
+                    )
+
+if __name__ == "__main__":
+    insert_evaluation_data()

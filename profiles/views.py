@@ -7,9 +7,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Q
 from .models import Profile, SharedProfilePermission
 from .serializers import ProfileSerializer
+from profile_data.models import ProfileItem
+from profile_data.serializers import ProfileItemSerializer
+from profile_data.utils import assign_template_data_to_profile
 
 CustomUser = get_user_model()
 
@@ -35,7 +38,7 @@ class ProfileViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'], url_path='create-child')
     def create_child_profile(self, request):
-        """Create a child profile and assign permissions to the creator."""
+        """Create a child profile and assign permissions and template data."""
         try:
             required_fields = ['first_name', 'last_name', 'birth_date']
             if any(field not in request.data for field in required_fields):
@@ -60,7 +63,6 @@ class ProfileViewSet(viewsets.ViewSet):
 
             category = self._calculate_category(birth_date)
 
-            # Create the profile without a parent
             child_profile = Profile.objects.create(
                 first_name=request.data['first_name'],
                 last_name=request.data['last_name'],
@@ -76,13 +78,21 @@ class ProfileViewSet(viewsets.ViewSet):
                 category=category
             )
 
-            # Assign all permissions to the creator
             all_permissions = ['view', 'edit', 'share', 'delete']
             for perm in all_permissions:
                 SharedProfilePermission.objects.create(
                     profile=child_profile,
                     shared_with=request.user,
                     permissions=perm
+                )
+
+            try:
+                assign_template_data_to_profile(child_profile)
+            except Exception as e:
+                child_profile.delete()
+                return Response(
+                    {'error': f'Failed to assign template data: {str(e)}'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
 
             serializer = ProfileSerializer(child_profile)
@@ -93,6 +103,49 @@ class ProfileViewSet(viewsets.ViewSet):
 
         except ValueError as ve:
             return Response({'error': str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['put'], url_path='items/(?P<item_id>[^/.]+)/update')
+    def update_profile_item(self, request, pk=None, item_id=None):
+        """Update a profile-specific item."""
+        try:
+            profile = get_object_or_404(Profile, pk=pk)
+            profile_item = get_object_or_404(ProfileItem, id=item_id, profile_domain__profile_category__profile=profile)
+
+            if not request.user.is_superuser:
+                has_edit_permission = SharedProfilePermission.objects.filter(
+                    profile=profile,
+                    shared_with=request.user,
+                    permissions='edit'
+                ).exists()
+                if not has_edit_permission:
+                    return Response(
+                        {'error': 'You are not authorized to update this item'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+
+            if 'name' in request.data:
+                profile_item.name = request.data['name']
+            if 'description' in request.data:
+                profile_item.description = request.data['description']
+            if 'etat' in request.data:
+                etat = request.data['etat']
+                if etat not in ['ACQUIS', 'NON_ACQUIS', 'NON_COTE']:
+                    return Response(
+                        {'error': 'Invalid etat. Must be one of: ACQUIS, NON_ACQUIS, NON_COTE'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                profile_item.etat = etat
+            profile_item.is_modified = True
+            profile_item.save()
+
+            serializer = ProfileItemSerializer(profile_item)
+            return Response(
+                {'message': 'Item updated successfully', 'data': serializer.data},
+                status=status.HTTP_200_OK
+            )
+
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -109,7 +162,6 @@ class ProfileViewSet(viewsets.ViewSet):
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Get profiles where the user has any permission
         profiles = Profile.objects.filter(shared_with__shared_with=user).distinct()
         serializer = ProfileSerializer(profiles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -176,6 +228,7 @@ class ProfileViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=['post'], url_path='share')
     def share_child_profile(self, request, pk=None):
+        """Share a child profile with another user by email or username."""
         try:
             profile = get_object_or_404(Profile, pk=pk)
 
@@ -191,19 +244,21 @@ class ProfileViewSet(viewsets.ViewSet):
                         status=status.HTTP_403_FORBIDDEN
                     )
 
-            required_fields = ['shared_with_id', 'permissions']
+            required_fields = ['shared_with', 'permissions']
             if any(field not in request.data for field in required_fields):
                 return Response(
                     {'error': f'Missing required fields: {", ".join(required_fields)}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            shared_with_id = request.data['shared_with_id']
+            shared_with = request.data['shared_with']
             try:
-                shared_with_user = CustomUser.objects.get(id=shared_with_id)
+                shared_with_user = CustomUser.objects.get(
+                    Q(email=shared_with) | Q(username=shared_with)
+                )
             except CustomUser.DoesNotExist:
                 return Response(
-                    {'error': 'User to share with not found'},
+                    {'error': 'User with provided email or username not found'},
                     status=status.HTTP_404_NOT_FOUND
                 )
 

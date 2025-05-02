@@ -41,11 +41,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Passwords don't match")
 
         # User type validation
-        valid_types = [choice[0] for choice in CustomUser.USER_TYPE_CHOICES]
-        if 'user_type' in data and data['user_type'] not in valid_types:
-            raise serializers.ValidationError({
-                'user_type': f"Must be one of: {', '.join(valid_types)}"
-            })
+        # valid_types = [choice[0] for choice in CustomUser.USER_TYPE_CHOICES]
+        # if 'user_type' in data and data['user_type'] not in valid_types:
+        #     raise serializers.ValidationError({
+        #         'user_type': f"Must be one of: {', '.join(valid_types)}"
+        #     })
 
         return data
 
