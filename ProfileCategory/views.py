@@ -36,8 +36,10 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
             profile=profile, shared_with=user, permissions='delete'
         ).exists()
 
-    def list(self, request, profile_id=None):
+    def list(self, request):
         try:
+            profile_id = request.query_params.get('profile_id')
+            print(f"Profile ID this is where to look: {profile_id}")
             profile = get_object_or_404(Profile, pk=profile_id)
 
             if not self._check_view_permission(profile, request.user):
@@ -65,7 +67,8 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def create(self, request, profile_id=None):
+    def create(self, request ):
+        profile_id = request.query_params.get('profile_id')
         print(f"Profile ID this is where to look: {profile_id}")
         profile_id = int(profile_id) if profile_id else None
         try:
@@ -89,7 +92,6 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
                 'profile': profile,
                 'name': request.data['name'],
                 'description': request.data.get('description', ''),
-                'template_category': None
             }
 
             category = ProfileCategory.objects.create(**category_data)

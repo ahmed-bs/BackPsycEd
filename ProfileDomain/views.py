@@ -83,7 +83,6 @@ class ProfileDomainViewSet(viewsets.ViewSet):
                 'profile_category': category,
                 'name': request.data['name'],
                 'description': request.data.get('description', ''),
-                'template_domain': None
             }
 
             domain = ProfileDomain.objects.create(**domain_data)

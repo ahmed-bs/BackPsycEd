@@ -1,13 +1,15 @@
-# In profiles/serializers.py
+# profiles/serializers.py
 from rest_framework import serializers
 from profiles.models import Profile
 from ProfileCategory.models import ProfileCategory
 from ProfileDomain.models import ProfileDomain
 from ProfileItem.models import ProfileItem
+
+
 class ProfileItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileItem
-        fields = ['id', 'name', 'description', 'etat', 'commentaire', 'is_modified', 'modified_at', 'template_item']
+        fields = ['id', 'name', 'description', 'etat', 'is_modified', 'modified_at']
         read_only_fields = ['id', 'is_modified', 'modified_at']
 
     def validate_etat(self, value):
@@ -16,22 +18,25 @@ class ProfileItemSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Invalid etat. Must be one of: ACQUIS, PARTIEL, NON_ACQUIS, NON_COTE")
         return value
 
-# ... (other serializers remain unchanged)
+
 class ProfileDomainSerializer(serializers.ModelSerializer):
     items = ProfileItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = ProfileDomain
-        fields = ['id', 'name', 'description', 'item_count', 'acquis_percentage', 'template_domain', 'items']
+        fields = ['id', 'name', 'description', 'item_count', 'acquis_percentage', 'items']
         read_only_fields = ['id', 'item_count', 'acquis_percentage']
+
 
 class ProfileCategorySerializer(serializers.ModelSerializer):
     domains = ProfileDomainSerializer(many=True, read_only=True)
+    domains_count = serializers.IntegerField(read_only=True)
+    items_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = ProfileCategory
-        fields = ['id', 'name', 'description', 'template_category', 'domains']
-        read_only_fields = ['id']
+        fields = ['id', 'name', 'description', 'domains', 'domains_count','created_at', 'items_count']
+        read_only_fields = ['id', 'domains_count', 'items_count']
 
 class ProfileSerializer(serializers.ModelSerializer):
     categories = ProfileCategorySerializer(many=True, read_only=True)

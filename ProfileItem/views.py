@@ -76,7 +76,6 @@ class ProfileItemViewSet(viewsets.ViewSet):
                 'name': request.data['name'],
                 'description': request.data.get('description', ''),
                 'etat': request.data.get('etat', 'NON_COTE'),
-                'template_item': None
             }
 
             item = ProfileItem.objects.create(**item_data)
