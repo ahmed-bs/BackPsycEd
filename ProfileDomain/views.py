@@ -41,8 +41,10 @@ class ProfileDomainViewSet(viewsets.ViewSet):
             profile=profile, shared_with=user, permissions='delete'
         ).exists()
 
-    def list(self, request, category_id=None):
+    def list(self, request):
         try:
+            category_id = request.query_params.get('category_id')
+            print(f"Profile ID this is where to look: {category_id}")
             category = get_object_or_404(ProfileCategory, pk=category_id)
             profile = category.profile
 
@@ -61,8 +63,10 @@ class ProfileDomainViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def create(self, request, category_id=None):
+    def create(self, request):
         try:
+            category_id = request.query_params.get('category_id')
+            print(f"Profile ID this is where to look: {category_id}")
             category = get_object_or_404(ProfileCategory, pk=category_id)
             profile = category.profile
 
