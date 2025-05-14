@@ -1,4 +1,5 @@
 from django.db import models
+from ProfileDomain.models import ProfileDomain
 from ProfileItem.models import ProfileItem
 from profiles.models import Profile
 
@@ -14,8 +15,8 @@ class ProfileCategory(models.Model):
 
     @property
     def domains_count(self):
-        return self.profiledomain_set.count()
+        return self.domains.count()
 
     @property
     def items_count(self):
-        return ProfileItem.objects.filter(profile_domain__profile_category=self).count()
+        return ProfileItem.objects.filter(profile_domain__in=self.domains.all()).count()

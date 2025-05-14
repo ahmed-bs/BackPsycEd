@@ -29,13 +29,13 @@ class ProfileDomainSerializer(serializers.ModelSerializer):
 
 
 class ProfileCategorySerializer(serializers.ModelSerializer):
-    domains = ProfileDomainSerializer(many=True, read_only=True)
+    # domains = ProfileDomainSerializer(many=True, read_only=True)
     domains_count = serializers.IntegerField(read_only=True)
     items_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = ProfileCategory
-        fields = ['id', 'name', 'description', 'domains', 'domains_count','created_at', 'items_count']
+        fields = ['id', 'name', 'description', 'domains_count','created_at', 'items_count']
         read_only_fields = ['id', 'domains_count', 'items_count']
 
 class ProfileSerializer(serializers.ModelSerializer):
