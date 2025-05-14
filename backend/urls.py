@@ -5,5 +5,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('authentification/', include('authentification.urls')),
     path('termdecondition/', include('termdecondition.urls')),
+    path('category/', include('ProfileCategory.urls')),
+    path('items/', include('ProfileItem.urls')),
+    path('domains/', include('ProfileDomain.urls')),
     path('', include('profiles.urls')),
 ]

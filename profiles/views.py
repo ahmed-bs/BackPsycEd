@@ -8,11 +8,8 @@ from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from .models import Profile, SharedProfilePermission
+from profiles.models import Profile, SharedProfilePermission
 from .serializers import ProfileSerializer
-from profile_data.models import ProfileItem
-from profile_data.serializers import ProfileItemSerializer
-from profile_data.utils import assign_template_data_to_profile
 
 CustomUser = get_user_model()
 
@@ -25,7 +22,7 @@ class ProfileViewSet(viewsets.ViewSet):
 
     def _calculate_category(self, birth_date):
         """Helper method to calculate autism category based on birth date."""
-        current_date = datetime(2025, 4, 27).date()
+        current_date = datetime(2025, 5, 11).date()
         age = relativedelta(current_date, birth_date).years
         if 0 <= age <= 2:
             return 'Toddler'
@@ -36,9 +33,32 @@ class ProfileViewSet(viewsets.ViewSet):
         else:
             raise ValueError('Age out of supported range (0-22 years).')
 
+    def _check_view_permission(self, profile, user):
+        """Check if user has view permission for the profile."""
+        if user.is_superuser:
+            return True
+        return SharedProfilePermission.objects.filter(
+            profile=profile, shared_with=user, permissions='view'
+        ).exists()
+
+    def _check_edit_permission(self, profile, user):
+        """Check if user has edit permission for the profile."""
+        if user.is_superuser:
+            return True
+        return SharedProfilePermission.objects.filter(
+            profile=profile, shared_with=user, permissions='edit'
+        ).exists()
+
+    def _check_delete_permission(self, profile, user):
+        """Check if user has delete permission for the profile."""
+        if user.is_superuser:
+            return True
+        return SharedProfilePermission.objects.filter(
+            profile=profile, shared_with=user, permissions='delete'
+        ).exists()
+
     @action(detail=False, methods=['post'], url_path='create-child')
     def create_child_profile(self, request):
-        """Create a child profile and assign permissions and template data."""
         try:
             required_fields = ['first_name', 'last_name', 'birth_date']
             if any(field not in request.data for field in required_fields):
@@ -86,72 +106,27 @@ class ProfileViewSet(viewsets.ViewSet):
                     permissions=perm
                 )
 
-            try:
-                assign_template_data_to_profile(child_profile)
-            except Exception as e:
-                child_profile.delete()
-                return Response(
-                    {'error': f'Failed to assign template data: {str(e)}'},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
+            # try:
+            #     assign_template_data_to_profile(child_profile)
+            # except Exception as e:
+            #     child_profile.delete()
+            #     return Response(
+            #         {'error': f'Failed to assign template data: {str(e)}'},
+            #         status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            #     )
 
             serializer = ProfileSerializer(child_profile)
             return Response(
                 {'message': 'Child profile created successfully', 'data': serializer.data},
                 status=status.HTTP_201_CREATED
             )
-
         except ValueError as ve:
             return Response({'error': str(ve)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=True, methods=['put'], url_path='items/(?P<item_id>[^/.]+)/update')
-    def update_profile_item(self, request, pk=None, item_id=None):
-        """Update a profile-specific item."""
-        try:
-            profile = get_object_or_404(Profile, pk=pk)
-            profile_item = get_object_or_404(ProfileItem, id=item_id, profile_domain__profile_category__profile=profile)
-
-            if not request.user.is_superuser:
-                has_edit_permission = SharedProfilePermission.objects.filter(
-                    profile=profile,
-                    shared_with=request.user,
-                    permissions='edit'
-                ).exists()
-                if not has_edit_permission:
-                    return Response(
-                        {'error': 'You are not authorized to update this item'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
-
-            if 'name' in request.data:
-                profile_item.name = request.data['name']
-            if 'description' in request.data:
-                profile_item.description = request.data['description']
-            if 'etat' in request.data:
-                etat = request.data['etat']
-                if etat not in ['ACQUIS', 'NON_ACQUIS', 'NON_COTE']:
-                    return Response(
-                        {'error': 'Invalid etat. Must be one of: ACQUIS, NON_ACQUIS, NON_COTE'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-                profile_item.etat = etat
-            profile_item.is_modified = True
-            profile_item.save()
-
-            serializer = ProfileItemSerializer(profile_item)
-            return Response(
-                {'message': 'Item updated successfully', 'data': serializer.data},
-                status=status.HTTP_200_OK
-            )
-
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     @action(detail=False, methods=['get'], url_path='user/(?P<user_id>[^/.]+)')
     def profiles_by_user(self, request, user_id):
-        """Retrieve all profiles associated with a specific user ID via SharedProfilePermission."""
         if not request.user.is_staff and str(request.user.id) != user_id:
             return Response(
                 {"error": "You are not authorized to view these profiles"},
@@ -168,21 +143,14 @@ class ProfileViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=['put'], url_path='update')
     def update_child_profile(self, request, pk=None):
-        """Update an existing child profile and reassign autism category."""
         try:
             child_profile = get_object_or_404(Profile, pk=pk)
 
-            if not request.user.is_superuser:
-                has_edit_permission = SharedProfilePermission.objects.filter(
-                    profile=child_profile,
-                    shared_with=request.user,
-                    permissions='edit'
-                ).exists()
-                if not has_edit_permission:
-                    return Response(
-                        {'error': 'You are not authorized to update this profile'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+            if not self._check_edit_permission(child_profile, request.user):
+                return Response(
+                    {'error': 'You are not authorized to update this profile'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
             if 'first_name' in request.data:
                 child_profile.first_name = request.data['first_name']
@@ -220,7 +188,6 @@ class ProfileViewSet(viewsets.ViewSet):
                 {'message': 'Child profile updated successfully', 'data': serializer.data},
                 status=status.HTTP_200_OK
             )
-
         except ValueError as ve:
             return Response({'error': str(ve)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -228,7 +195,6 @@ class ProfileViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=['post'], url_path='share')
     def share_child_profile(self, request, pk=None):
-        """Share a child profile with another user by email or username."""
         try:
             profile = get_object_or_404(Profile, pk=pk)
 
@@ -287,40 +253,30 @@ class ProfileViewSet(viewsets.ViewSet):
                 {'message': f'Profile shared successfully with {shared_with_user.username}'},
                 status=status.HTTP_200_OK
             )
-
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=True, methods=['delete'], url_path='delete')
     def delete_child_profile(self, request, pk=None):
-        """Delete a child profile (only users with delete permission or admins)."""
         try:
             child_profile = get_object_or_404(Profile, pk=pk)
 
-            if not request.user.is_superuser:
-                has_delete_permission = SharedProfilePermission.objects.filter(
-                    profile=child_profile,
-                    shared_with=request.user,
-                    permissions='delete'
-                ).exists()
-                if not has_delete_permission:
-                    return Response(
-                        {'error': 'You are not authorized to delete this profile'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+            if not self._check_delete_permission(child_profile, request.user):
+                return Response(
+                    {'error': 'You are not authorized to delete this profile'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
             child_profile.delete()
             return Response(
                 {'message': 'Child profile deleted successfully'},
                 status=status.HTTP_204_NO_CONTENT
             )
-
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=False, methods=['get'], url_path='list-all')
     def list_all_profiles(self, request):
-        """List all profiles in the system (admin only)."""
         try:
             if not request.user.is_superuser:
                 return Response(
@@ -334,33 +290,24 @@ class ProfileViewSet(viewsets.ViewSet):
                 {'message': 'Profiles retrieved successfully', 'data': serializer.data},
                 status=status.HTTP_200_OK
             )
-
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=True, methods=['get'], url_path='get')
     def get_by_id(self, request, pk=None):
-        """Retrieve a child profile by ID, respecting user permissions."""
         try:
             child_profile = get_object_or_404(Profile, pk=pk)
 
-            if not request.user.is_superuser:
-                has_view_permission = SharedProfilePermission.objects.filter(
-                    profile=child_profile,
-                    shared_with=request.user,
-                    permissions='view'
-                ).exists()
-                if not has_view_permission:
-                    return Response(
-                        {'error': 'You are not authorized to view this profile'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+            if not self._check_view_permission(child_profile, request.user):
+                return Response(
+                    {'error': 'You are not authorized to view this profile'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
             serializer = ProfileSerializer(child_profile)
             return Response(
                 {'message': 'Profile retrieved successfully', 'data': serializer.data},
                 status=status.HTTP_200_OK
             )
-
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,65 +1,49 @@
-from django.db import transaction
-from template_data.models import TemplateCategory
-from .models import Profile
-from profile_data.models import ProfileCategory, ProfileDomain, ProfileItem
+# In profiles/serializers.py
 from rest_framework import serializers
+from profiles.models import Profile
+from ProfileCategory.models import ProfileCategory
+from ProfileDomain.models import ProfileDomain
+from ProfileItem.models import ProfileItem
+class ProfileItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfileItem
+        fields = ['id', 'name', 'description', 'etat', 'commentaire', 'is_modified', 'modified_at', 'template_item']
+        read_only_fields = ['id', 'is_modified', 'modified_at']
 
-# class ProfileShareSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ProfileShare
-#         fields = ('id', 'profile', 'shared_with', 'can_read', 'can_write', 'can_update', 'can_delete')
+    def validate_etat(self, value):
+        valid_etats = [choice[0] for choice in ProfileItem.ETAT_CHOICES]
+        if value not in valid_etats:
+            raise serializers.ValidationError("Invalid etat. Must be one of: ACQUIS, PARTIEL, NON_ACQUIS, NON_COTE")
+        return value
+
+# ... (other serializers remain unchanged)
+class ProfileDomainSerializer(serializers.ModelSerializer):
+    items = ProfileItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ProfileDomain
+        fields = ['id', 'name', 'description', 'item_count', 'acquis_percentage', 'template_domain', 'items']
+        read_only_fields = ['id', 'item_count', 'acquis_percentage']
+
+class ProfileCategorySerializer(serializers.ModelSerializer):
+    domains = ProfileDomainSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ProfileCategory
+        fields = ['id', 'name', 'description', 'template_category', 'domains']
+        read_only_fields = ['id']
 
 class ProfileSerializer(serializers.ModelSerializer):
+    categories = ProfileCategorySerializer(many=True, read_only=True)
+    associated_users = serializers.SerializerMethodField()
+
     class Meta:
         model = Profile
-        fields = '__all__'
-        extra_kwargs = {
-            'bio': {'required': False, 'allow_null': True},
-            'parent': {'read_only': True},
-            'diagnosis': {'required': False, 'allow_null': True},
-            'notes': {'required': False, 'allow_null': True},
-            'evaluation_score': {'required': False},
-            'objectives': {'required': False},
-            'progress': {'required': False},
-            'recommended_strategies': {'required': False},
-            'image_url': {'required': False, 'allow_null': True},
-        }
-    def assign_template_data_to_profile(profile):
-        """
-        Copy all template categories, domains, and items to a profile.
-        """
-        with transaction.atomic():
-            template_categories = TemplateCategory.objects.all()
-            
-            for template_category in template_categories:
-                profile_category = ProfileCategory.objects.create(
-                    profile=profile,
-                    template_category=template_category,
-                    name=template_category.name,
-                    description=template_category.description
-                )
-                
-                for template_domain in template_category.domains.all():
-                    profile_domain = ProfileDomain.objects.create(
-                        profile_category=profile_category,
-                        template_domain=template_domain,
-                        name=template_domain.name,
-                        description=template_domain.description
-                    )
-                    
-                    for template_item in template_domain.items.all():
-                        # Map TemplateItem code to ProfileItem etat
-                        code_to_etat = {
-                            'A': 'ACQUIS',
-                            'P': 'PARTIEL',
-                            'N': 'NON_ACQUIS',
-                            'X': 'NON_COTE'
-                        }
-                        etat = code_to_etat.get(template_item.code, 'NON_COTE')
-                        ProfileItem.objects.create(
-                            profile_domain=profile_domain,
-                            template_item=template_item,
-                            name=template_item.name,
-                            description=template_item.description,
-                            etat=etat
-                        )
+        fields = [
+            'id', 'category', 'first_name', 'last_name', 'birth_date', 'diagnosis', 'notes',
+            'evaluation_score', 'objectives', 'progress', 'recommended_strategies', 'image_url',
+            'created_at', 'is_active', 'bio', 'gender', 'associated_users', 'categories'
+        ]
+
+    def get_associated_users(self, obj):
+        return [user.username for user in obj.associated_users]

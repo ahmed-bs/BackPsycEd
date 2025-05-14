@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     'termdecondition',
     'authentification',
     'profiles',
-    'template_data',
-    'profile_data',
+    'ProfileCategory',
+    'ProfileDomain',
+    'ProfileItem',
+
 ]
 # Frontend URL for password reset links
 FRONTEND_URL = 'https://your-frontend-domain.com'
