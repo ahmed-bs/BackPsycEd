@@ -10,7 +10,11 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from profiles.models import Profile, SharedProfilePermission
 from .serializers import ProfileSerializer
-
+import json
+import os
+from ProfileCategory.models import ProfileCategory
+from ProfileDomain.models import ProfileDomain
+from ProfileItem.models import ProfileItem
 CustomUser = get_user_model()
 
 def parse_bool(value):
@@ -19,7 +23,42 @@ def parse_bool(value):
 class ProfileViewSet(viewsets.ViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    def assign_template_data_to_profile(self, profile, age):
+        """Assign predefined categories, domains, and items to a profile."""
+        try:
+            # Load TEMPLATE_DATA from JSON file
+            template_file = 'template_kids_data.json' if age <= 5 else 'template_adulte_data.json'
+            template_file_path = os.path.join(os.path.dirname(__file__), 'templates', template_file)
+            with open(template_file_path, 'r') as file:
+                TEMPLATE_DATA = json.load(file)
 
+            for category_data in TEMPLATE_DATA:
+                print(f"Assigning category: {category_data['category_name']}")
+                category = ProfileCategory.objects.create(
+                    profile=profile,
+                    name=category_data["category_name"],
+                    description=category_data.get("category_description", ""),
+                )
+                for domain_data in category_data["domains"]:
+                    print(f"Assigning domain: {domain_data['name']}")
+                    domain = ProfileDomain.objects.create(
+                        profile_category=category,
+                        name=domain_data["name"],
+                        description=domain_data.get("description", ""),
+                    )
+                    for item_data in domain_data["items"]:
+                        print(f"Assigning item: {item_data['name']}")
+                        ProfileItem.objects.create(
+                            profile_domain=domain,
+                            name=item_data["name"],
+                            description=item_data.get("description", ""),
+                            etat=item_data.get("etat", "NON_COTE"),
+                        )
+                    domain.update_metrics()
+            return True
+        except Exception as e:
+            print(f"Error assigning template data: {e}")
+            raise Exception(f"Failed to assign template data: {str(e)}")
     def _calculate_category(self, birth_date):
         """Helper method to calculate autism category based on birth date."""
         current_date = datetime(2025, 5, 11).date()
@@ -82,6 +121,8 @@ class ProfileViewSet(viewsets.ViewSet):
                 )
 
             category = self._calculate_category(birth_date)
+            current_date = datetime.now().date()  # Use current date instead of hardcoding
+            age = relativedelta(current_date, birth_date).years
 
             child_profile = Profile.objects.create(
                 first_name=request.data['first_name'],
@@ -106,15 +147,15 @@ class ProfileViewSet(viewsets.ViewSet):
                     permissions=perm
                 )
 
-            # try:
-            #     assign_template_data_to_profile(child_profile)
-            # except Exception as e:
-            #     child_profile.delete()
-            #     return Response(
-            #         {'error': f'Failed to assign template data: {str(e)}'},
-            #         status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            #     )
-
+            try:
+                    
+                self.assign_template_data_to_profile(child_profile, age)
+            except Exception as e:
+                child_profile.delete()  
+                return Response(
+                    {'error': f'Failed to assign template data: {str(e)}'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
             serializer = ProfileSerializer(child_profile)
             return Response(
                 {'message': 'Child profile created successfully', 'data': serializer.data},
