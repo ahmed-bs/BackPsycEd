@@ -7,8 +7,8 @@ from ProfileCategory.models import ProfileCategory
 from ProfileDomain.models import  ProfileDomain
 from profiles.serializers import  ProfileDomainSerializer
 from rest_framework import status, viewsets
-
-
+from django.db.models import Q, Count, F
+from rest_framework.decorators import action
 
 
 class ProfileDomainViewSet(viewsets.ViewSet):
@@ -40,7 +40,43 @@ class ProfileDomainViewSet(viewsets.ViewSet):
         return SharedProfilePermission.objects.filter(
             profile=profile, shared_with=user, permissions='delete'
         ).exists()
+    @action(detail=False, methods=['get'], url_path='specific-items')
+    def list_domains_with_specific_items(self, request):
+        try:
+            category_id = request.query_params.get('category_id')
+            print(f"Profile ID this is where to look: {category_id}")
+            category = get_object_or_404(ProfileCategory, pk=category_id)
+            profile = category.profile
 
+            if not self._check_view_permission(profile, request.user):
+                return Response(
+                    {'error': 'You are not authorized to view domains for this category'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # Get domains with at least one item where etat != 'NON_COTE'
+            # and not all items are 'ACQUIS'
+            domains = ProfileDomain.objects.filter(
+                profile_category=category,
+                items__etat__in=['ACQUIS', 'PARTIEL', 'NON_ACQUIS']  # At least one item not NON_COTE
+            ).annotate(
+                total_items=Count('items'),
+                acquis_items=Count('items', filter=Q(items__etat='ACQUIS'))
+            ).filter(
+                total_items__gt=0,  # Ensure domain has items
+                acquis_items__lt=F('total_items')  # Not all items are ACQUIS
+            ).distinct()
+
+            serializer = ProfileDomainSerializer(domains, many=True)
+            return Response(
+                {
+                    'message': 'Domains with specific item states retrieved successfully',
+                    'data': serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     def list(self, request):
         try:
             category_id = request.query_params.get('category_id')
