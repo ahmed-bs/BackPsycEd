@@ -33,7 +33,7 @@ class ProfileItemViewSet(viewsets.ViewSet):
             profile=profile, shared_with=user, permissions='delete'
         ).exists()
 
-    def list(self, request, ):
+    def list(self, request):
         try:
             domain_id = request.query_params.get('domain_id')
             domain = get_object_or_404(ProfileDomain, pk=domain_id)
@@ -47,12 +47,27 @@ class ProfileItemViewSet(viewsets.ViewSet):
 
             items = ProfileItem.objects.filter(profile_domain=domain)
             serializer = ProfileItemSerializer(items, many=True)
+            
+            # Customize response to include domain and category names
+            response_data = [
+                {
+                    'id': item['id'],
+                    'name': item['name'],
+                    'description': item['description'],
+                    'etat': item['etat'],
+                    'profile_domain_name': domain.name,
+                    'profile_category_name': domain.profile_category.name
+                }
+                for item in serializer.data
+            ]
+            
             return Response(
-                {'message': 'Items retrieved successfully', 'data': serializer.data},
+                {'message': 'Items retrieved successfully', 'data': response_data},
                 status=status.HTTP_200_OK
             )
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def create(self, request):
         try:
