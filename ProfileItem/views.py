@@ -47,7 +47,7 @@ class ProfileItemViewSet(viewsets.ViewSet):
 
             items = ProfileItem.objects.filter(profile_domain=domain)
             serializer = ProfileItemSerializer(items, many=True)
-            
+        
             # Customize response to include domain and category names
             response_data = [
                 {
@@ -56,7 +56,8 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     'description': item['description'],
                     'etat': item['etat'],
                     'profile_domain_name': domain.name,
-                    'profile_category_name': domain.profile_category.name
+                    'profile_category_name': domain.profile_category.name,
+                    'comentaire': item['comentaire'],
                 }
                 for item in serializer.data
             ]
@@ -93,6 +94,7 @@ class ProfileItemViewSet(viewsets.ViewSet):
                 'profile_domain': domain,
                 'name': request.data['name'],
                 'description': request.data.get('description', ''),
+                'comentaire': request.data.get('comentaire', ''),
                 'etat': request.data.get('etat', 'NON_COTE'),
             }
 
@@ -121,6 +123,8 @@ class ProfileItemViewSet(viewsets.ViewSet):
                 item.name = request.data['name']
             if 'description' in request.data:
                 item.description = request.data['description']
+            if 'comentaire' in request.data:
+                item.comentaire = request.data['comentaire']
             if 'etat' in request.data:
                 etat = request.data['etat']
                 if etat not in [choice[0] for choice in ProfileItem.ETAT_CHOICES]:

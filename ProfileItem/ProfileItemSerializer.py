@@ -7,4 +7,4 @@ class ProfileItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProfileItem
-        fields = ['id', 'name', 'description', 'etat', 'profile_domain', 'profile_domain_name', 'profile_category_name']
+        fields = ['id', 'name', 'description', 'etat', 'profile_domain', 'profile_domain_name', 'profile_category_name', 'comentaire']

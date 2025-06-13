@@ -18,6 +18,7 @@ class ProfileItem(models.Model):
     profile_domain = models.ForeignKey(ProfileDomain, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
+    comentaire = models.TextField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)
     modified_at = models.DateTimeField(auto_now=True)
     etat = models.CharField(max_length=10, choices=ETAT_CHOICES, default='NON_COTE')
