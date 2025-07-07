@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'ProfileCategory',
     'ProfileDomain',
     'ProfileItem',
-    'goals'
+    'goals',
+    'notes'
 ]
 # Frontend URL for password reset links
 FRONTEND_URL = 'https://your-frontend-domain.com'

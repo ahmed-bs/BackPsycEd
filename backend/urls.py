@@ -11,5 +11,8 @@ urlpatterns = [
     path('', include('profiles.urls')),
 
      # --- NEW PATH FOR GOALS ---
-    path('', include('goals.urls'))
+    path('', include('goals.urls')),
+    
+    # --- NEW PATH FOR NOTES ---
+    path('', include('notes.urls'))
 ]
