@@ -7,176 +7,176 @@
           "name": "Communication réceptive",
           "description": "Communication réceptive",
           "items": [
-            {"name": "1", "description": "Se tourne vers l'origine des sons pour les localiser.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Dirige son regard vers des sons drôles (ex. : bruits de pets, sifflements).", "etat": "NON_COTE"},
-            {"name": "3", "description": "Se tourne vers la personne qui lui parle.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Observe les images lorsqu'un adulte les désigne dans un livre.", "etat": "NON_COTE"},
-            {"name": "5", "description": "Suit la direction du doigt pour placer des objets dans des contenants ou assembler un puzzle.", "etat": "NON_COTE"},
-            {"name": "6", "description": "Regarde un objet lorsqu'on l'interpelle en disant : « X, regarde. »", "etat": "NON_COTE"},
-            {"name": "7", "description": "Tourne la tête vers son partenaire lorsqu'il entend son nom.", "etat": "NON_COTE"},
-            {"name": "8", "description": "Suit la direction du doigt pour repérer un objet ou un lieu.", "etat": "NON_COTE"},
-            {"name": "9", "description": "Suit le geste de pointage pour aller chercher un jouet.", "etat": "NON_COTE"},
-            {"name": "10", "description": "Réagit en regardant, tendant les bras ou souriant aux gestes et à la voix de l'adulte dans les jeux sociaux.", "etat": "NON_COTE"},
-            {"name": "11", "description": "Réagit aux gestes et paroles de l'adulte dans les comptines en regardant, souriant, tendant les bras ou en imitant des gestes.", "etat": "NON_COTE"},
-            {"name": "12", "description": "S'arrête brièvement lorsqu'il entend un mot d'interdiction (ex. : « Non », « Arrête »).", "etat": "NON_COTE"},
-            {"name": "13", "description": "Donne un objet demandé verbalement si l'adulte tend la main pour l'accompagner.", "etat": "NON_COTE"},
-            {"name": "14", "description": "Suit une consigne simple avec un geste ou une indication verbale (ex. : « Assieds-toi », « Viens ici », « Range »).", "etat": "NON_COTE"},
-            {"name": "15", "description": "Suit une consigne verbale simple sans geste d'accompagnement (ex. : « Assieds-toi », « Viens ici », « Range »).", "etat": "NON_COTE"}
+            {"name": "Se tourne vers l'origine des sons pour les localiser.", "description": "L'enfant est capable de réagir à des stimuli sonores en tournant la tête ou le corps vers la source du son, démontrant ainsi une capacité à localiser l'origine des bruits dans son environnement immédiat.", "etat": "NON_COTE"},
+            {"name": "Dirige son regard vers des sons drôles (ex. : bruits de pets, sifflements).", "description": "L'enfant manifeste de l'intérêt pour des sons inhabituels ou amusants en orientant spontanément son regard vers la source, ce qui indique une attention auditive sélective et une curiosité naturelle.", "etat": "NON_COTE"},
+            {"name": "Se tourne vers la personne qui lui parle.", "description": "Lorsqu'une personne s'adresse à lui, l'enfant se tourne vers elle, montrant ainsi qu'il reconnaît et répond à la communication verbale dirigée vers lui.", "etat": "NON_COTE"},
+            {"name": "Observe les images lorsqu'un adulte les désigne dans un livre.", "description": "L'enfant suit du regard les indications de l'adulte lorsqu'il pointe des images dans un livre, démontrant une compréhension de la référence partagée et un intérêt pour l'exploration visuelle guidée.", "etat": "NON_COTE"},
+            {"name": "Suit la direction du doigt pour placer des objets dans des contenants ou assembler un puzzle.", "description": "L'enfant est capable de suivre la direction indiquée par le doigt d'un adulte pour accomplir une tâche motrice, comme placer des objets ou assembler un puzzle, ce qui montre une compréhension des consignes gestuelles.", "etat": "NON_COTE"},
+            {"name": "Regarde un objet lorsqu'on l'interpelle en disant : « X, regarde. »", "description": "Lorsque l'adulte attire son attention verbalement sur un objet, l'enfant oriente son regard vers celui-ci, illustrant sa capacité à comprendre et à répondre à une consigne verbale simple.", "etat": "NON_COTE"},
+            {"name": "Tourne la tête vers son partenaire lorsqu'il entend son nom.", "description": "À l'appel de son prénom, l'enfant tourne la tête vers la personne qui l'a interpellé, ce qui indique une reconnaissance de son nom et une réponse sociale appropriée.", "etat": "NON_COTE"},
+            {"name": "Suit la direction du doigt pour repérer un objet ou un lieu.", "description": "L'enfant utilise l'indication gestuelle d'un adulte (pointage du doigt) pour localiser un objet ou un endroit précis, montrant ainsi une compréhension des gestes de désignation.", "etat": "NON_COTE"},
+            {"name": "Suit le geste de pointage pour aller chercher un jouet.", "description": "Lorsque l'adulte pointe un jouet, l'enfant suit ce geste et va chercher l'objet désigné, démontrant une capacité à interpréter et à agir sur des indications non verbales.", "etat": "NON_COTE"},
+            {"name": "Réagit en regardant, tendant les bras ou souriant aux gestes et à la voix de l'adulte dans les jeux sociaux.", "description": "Dans le cadre de jeux sociaux, l'enfant répond aux sollicitations de l'adulte par des réactions appropriées telles que le regard, le sourire ou des gestes, ce qui témoigne d'une compréhension des interactions sociales et des signaux verbaux/non verbaux.", "etat": "NON_COTE"},
+            {"name": "Réagit aux gestes et paroles de l'adulte dans les comptines en regardant, souriant, tendant les bras ou en imitant des gestes.", "description": "Lors de comptines, l'enfant montre qu'il comprend les gestes et paroles de l'adulte en réagissant par des mimiques, des gestes ou des sourires, participant activement à l'activité rituelle.", "etat": "NON_COTE"},
+            {"name": "S'arrête brièvement lorsqu'il entend un mot d'interdiction (ex. : « Non », « Arrête »).", "description": "L'enfant interrompt momentanément son action lorsqu'il entend un mot d'interdiction, ce qui indique une compréhension des consignes verbales négatives et une capacité à adapter son comportement.", "etat": "NON_COTE"},
+            {"name": "Donne un objet demandé verbalement si l'adulte tend la main pour l'accompagner.", "description": "Lorsque l'adulte demande un objet et accompagne sa demande d'un geste (main tendue), l'enfant remet l'objet, montrant ainsi qu'il comprend la consigne verbale appuyée par un geste.", "etat": "NON_COTE"},
+            {"name": "Suit une consigne simple avec un geste ou une indication verbale (ex. : « Assieds-toi », « Viens ici », « Range »).", "description": "L'enfant exécute une consigne simple donnée verbalement ou accompagnée d'un geste, démontrant sa capacité à comprendre et à suivre des instructions de base.", "etat": "NON_COTE"},
+            {"name": "Suit une consigne verbale simple sans geste d'accompagnement (ex. : « Assieds-toi », « Viens ici », « Range »).", "description": "L'enfant comprend et réalise une consigne verbale simple sans avoir besoin d'un support gestuel, ce qui montre une progression dans la compréhension du langage oral.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Communication expressive",
           "description": "Communication expressive",
           "items": [
-            {"name": "1", "description": "Étend les bras vers une personne ou un objet pour exprimer une demande.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Émet des sons de manière intentionnelle.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Sollicite de l'aide en tendant un objet à l'adulte.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Alterne les vocalisations avec un interlocuteur lors d'un échange.", "etat": "NON_COTE"},
-            {"name": "5", "description": "Manifeste son refus en repoussant un objet ou en le rendant à quelqu’un.", "etat": "NON_COTE"},
-            {"name": "6", "description": "Désigne un objet de près avec son doigt pour le demander.", "etat": "NON_COTE"},
-            {"name": "7", "description": "Regarde l’adulte pour obtenir un objet lorsque celui-ci bloque l’accès ou le retient.", "etat": "NON_COTE"},
-            {"name": "8", "description": "Désigne un objet du doigt pour faire un choix entre deux options.", "etat": "NON_COTE"},
-            {"name": "9", "description": "Accompagne son regard d’une vocalisation pour exprimer une demande.", "etat": "NON_COTE"},
-            {"name": "10", "description": "Désigne un objet éloigné du doigt pour le demander.", "etat": "NON_COTE"},
-            {"name": "11", "description": "Pointe du doigt à distance pour choisir entre deux objets.", "etat": "NON_COTE"},
-            {"name": "12", "description": "Babille en répétant des syllabes (CVCV), sans forcément former des mots.", "etat": "NON_COTE"},
-            {"name": "13", "description": "Utilise au moins cinq consonnes différentes dans ses vocalisations spontanées.", "etat": "NON_COTE"},
-            {"name": "14", "description": "Enchaîne des syllabes variées (CVCV avec des voyelles différentes) dans son babillage.", "etat": "NON_COTE"}
+            {"name": "Étend les bras vers une personne ou un objet pour exprimer une demande.", "description": "L'enfant manifeste une intention claire de demander quelque chose en étendant les bras vers une personne ou un objet, démontrant ainsi une capacité à utiliser des gestes pour communiquer ses besoins ou désirs.", "etat": "NON_COTE"},
+            {"name": "Émet des sons de manière intentionnelle.", "description": "L'enfant produit des sons de façon volontaire et dirigée, ce qui indique une prise de conscience de l'effet de ses vocalisations sur son environnement et une première étape vers la communication verbale.", "etat": "NON_COTE"},
+            {"name": "Sollicite de l'aide en tendant un objet à l'adulte.", "description": "L'enfant demande de l'aide en tendant un objet à un adulte, montrant ainsi qu'il comprend comment utiliser l'interaction sociale pour obtenir une assistance ou une réponse à ses besoins.", "etat": "NON_COTE"},
+            {"name": "Alterne les vocalisations avec un interlocuteur lors d'un échange.", "description": "L'enfant participe à un échange vocal en alternant ses propres vocalisations avec celles d'un interlocuteur, ce qui reflète une compréhension précoce du tour de parole et de la réciprocité dans la communication.", "etat": "NON_COTE"},
+            {"name": "Manifeste son refus en repoussant un objet ou en le rendant à quelqu'un.", "description": "L'enfant exprime son refus ou son désaccord en repoussant un objet ou en le rendant à une autre personne, démontrant ainsi une capacité à communiquer ses préférences de manière non verbale.", "etat": "NON_COTE"},
+            {"name": "Désigne un objet de près avec son doigt pour le demander.", "description": "L'enfant utilise le geste de pointer du doigt un objet proche pour exprimer une demande, illustrant sa capacité à associer un geste précis à une intention de communication.", "etat": "NON_COTE"},
+            {"name": "Regarde l'adulte pour obtenir un objet lorsque celui-ci bloque l'accès ou le retient.", "description": "Lorsque l'accès à un objet est bloqué ou que l'adulte le retient, l'enfant regarde l'adulte pour solliciter son intervention, montrant ainsi une compréhension de l'intentionnalité dans la communication.", "etat": "NON_COTE"},
+            {"name": "Désigne un objet du doigt pour faire un choix entre deux options.", "description": "L'enfant exprime une préférence ou fait un choix en pointant du doigt l'un des deux objets proposés, démontrant ainsi une capacité à utiliser le geste pour communiquer une décision.", "etat": "NON_COTE"},
+            {"name": "Accompagne son regard d'une vocalisation pour exprimer une demande.", "description": "L'enfant combine le regard vers un objet ou une personne avec une vocalisation pour exprimer une demande, montrant une coordination entre les indices non verbaux et verbaux dans la communication.", "etat": "NON_COTE"},
+            {"name": "Désigne un objet éloigné du doigt pour le demander.", "description": "L'enfant pointe du doigt un objet situé à distance pour exprimer son désir de l'obtenir, ce qui indique une capacité à utiliser le geste de pointage pour communiquer au-delà de l'immédiat.", "etat": "NON_COTE"},
+            {"name": "Pointe du doigt à distance pour choisir entre deux objets.", "description": "L'enfant utilise le pointage à distance pour indiquer son choix entre deux objets, montrant ainsi une compréhension de la communication référentielle et de la capacité à exprimer des préférences.", "etat": "NON_COTE"},
+            {"name": "Babille en répétant des syllabes (CVCV), sans forcément former des mots.", "description": "L'enfant produit des suites de syllabes répétées (de type consonne-voyelle-consonne-voyelle), ce qui constitue une étape importante dans le développement du langage oral, même si ces vocalisations ne forment pas encore de mots.", "etat": "NON_COTE"},
+            {"name": "Utilise au moins cinq consonnes différentes dans ses vocalisations spontanées.", "description": "L'enfant démontre une diversité phonétique en utilisant spontanément au moins cinq consonnes différentes dans ses vocalisations, ce qui reflète une progression dans l'acquisition des sons du langage.", "etat": "NON_COTE"},
+            {"name": "Enchaîne des syllabes variées (CVCV avec des voyelles différentes) dans son babillage.", "description": "L'enfant varie les syllabes dans son babillage, enchaînant des combinaisons de consonnes et de voyelles différentes, ce qui montre une exploration active des possibilités sonores du langage.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Compétences sociales",
           "description": "Compétences sociales",
           "items": [
-            {"name": "1", "description": "Accepte de courtes interactions sociales impliquant des sensations et du contact.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Utilise des gestes pour lancer ou poursuivre une activité sociale sensorielle.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Établit un bref contact visuel avec une autre personne.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Participe activement à une routine sociale sensorielle pendant environ 2 minutes.", "etat": "NON_COTE"},
-            {"name": "5", "description": "Réagit à ses objets ou activités préférés en regardant, en tendant les bras, en souriant ou en bougeant.", "etat": "NON_COTE"},
-            {"name": "6", "description": "Observe et interagit avec l’adulte qui l’imite dans un jeu parallèle avec des jouets.", "etat": "NON_COTE"},
-            {"name": "7", "description": "Connaît entre 5 et 10 jeux sociaux sensoriels.", "etat": "NON_COTE"},
-            {"name": "8", "description": "Réagit aux salutations en regardant ou en se tournant vers la personne.", "etat": "NON_COTE"},
-            {"name": "9", "description": "Répond aux salutations avec un geste ou une vocalisation.", "etat": "NON_COTE"},
-            {"name": "10", "description": "Échange des sourires avec son partenaire lors d’un jeu coordonné.", "etat": "NON_COTE"}
+            {"name": "Accepte de courtes interactions sociales impliquant des sensations et du contact.", "description": "L'enfant accepte et participe à de brèves interactions sociales qui incluent des sensations physiques ou du contact, comme des jeux de toucher ou des échanges de proximité, montrant ainsi une ouverture à l'engagement social et à la tolérance sensorielle.", "etat": "NON_COTE"},
+            {"name": "Utilise des gestes pour lancer ou poursuivre une activité sociale sensorielle.", "description": "L'enfant initie ou maintient une activité sociale à caractère sensoriel (ex : chatouilles, jeux de mains) en utilisant des gestes, ce qui indique une compréhension des codes sociaux et une volonté d'interagir avec autrui.", "etat": "NON_COTE"},
+            {"name": "Établit un bref contact visuel avec une autre personne.", "description": "L'enfant est capable de croiser le regard d'une autre personne, même brièvement, ce qui constitue une étape importante dans le développement des compétences sociales et de la communication non verbale.", "etat": "NON_COTE"},
+            {"name": "Participe activement à une routine sociale sensorielle pendant environ 2 minutes.", "description": "L'enfant prend part de façon active à une routine sociale sensorielle (ex : jeux de balancement, chansons gestuées) pendant une durée d'environ 2 minutes, montrant ainsi son engagement et sa capacité à maintenir l'attention dans une interaction sociale.", "etat": "NON_COTE"},
+            {"name": "Réagit à ses objets ou activités préférés en regardant, en tendant les bras, en souriant ou en bougeant.", "description": "L'enfant manifeste son intérêt ou son plaisir face à ses objets ou activités préférés par des réactions visibles telles que le regard, le sourire, des gestes ou des mouvements corporels, ce qui indique une capacité à exprimer ses émotions et ses préférences dans un contexte social.", "etat": "NON_COTE"},
+            {"name": "Observe et interagit avec l'adulte qui l'imite dans un jeu parallèle avec des jouets.", "description": "L'enfant observe l'adulte qui imite ses actions lors d'un jeu parallèle avec des jouets et peut interagir en retour, montrant ainsi une conscience de l'autre et une capacité à entrer dans une dynamique d'imitation sociale.", "etat": "NON_COTE"},
+            {"name": "Connaît entre 5 et 10 jeux sociaux sensoriels.", "description": "L'enfant a acquis et reconnaît entre 5 et 10 jeux sociaux sensoriels (ex : coucou, tape-mains, chatouilles), ce qui témoigne d'une familiarité avec les routines sociales et d'une mémoire sociale en développement.", "etat": "NON_COTE"},
+            {"name": "Réagit aux salutations en regardant ou en se tournant vers la personne.", "description": "L'enfant répond aux salutations (bonjour, au revoir) en regardant ou en se tournant vers la personne qui le salue, montrant ainsi une compréhension des conventions sociales de base.", "etat": "NON_COTE"},
+            {"name": "Répond aux salutations avec un geste ou une vocalisation.", "description": "L'enfant répond aux salutations reçues par un geste (ex : signe de la main) ou une vocalisation, ce qui indique une capacité à participer activement aux échanges sociaux.", "etat": "NON_COTE"},
+            {"name": "Échange des sourires avec son partenaire lors d'un jeu coordonné.", "description": "L'enfant partage des sourires avec un partenaire lors d'un jeu coordonné, illustrant une réciprocité émotionnelle et une capacité à établir une connexion sociale positive.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Imitation",
           "description": "Imitation",
           "items": [
-            {"name": "1", "description": "Reproduit 8 à 10 actions simples en utilisant des objets.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Imite 10 gestes impliquant des parties visibles de son corps lors de chansons ou de jeux.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Copie 6 mouvements touchant des parties moins visibles de son corps (tête, visage) dans des activités chantées ou ludiques.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Reproduit 6 mouvements impliquant la bouche et le visage.", "etat": "NON_COTE"}
+            {"name": "Reproduit 8 à 10 actions simples en utilisant des objets.", "description": "L'enfant est capable d'observer et de reproduire entre 8 et 10 actions simples réalisées avec des objets (par exemple : taper, empiler, secouer), ce qui montre une bonne capacité d'observation, de mémorisation et d'imitation motrice dans un contexte ludique ou d'apprentissage.", "etat": "NON_COTE"},
+            {"name": "Imite 10 gestes impliquant des parties visibles de son corps lors de chansons ou de jeux.", "description": "L'enfant imite jusqu'à 10 gestes différents qui mobilisent des parties visibles de son corps (bras, mains, jambes) lors de chansons ou de jeux, illustrant ainsi sa capacité à reproduire des mouvements observés et à participer activement à des activités collectives.", "etat": "NON_COTE"},
+            {"name": "Copie 6 mouvements touchant des parties moins visibles de son corps (tête, visage) dans des activités chantées ou ludiques.", "description": "L'enfant est capable de copier 6 mouvements impliquant des parties moins visibles de son corps, comme la tête ou le visage, dans des activités chantées ou ludiques, ce qui témoigne d'une attention particulière aux détails et d'une finesse dans l'imitation gestuelle.", "etat": "NON_COTE"},
+            {"name": "Reproduit 6 mouvements impliquant la bouche et le visage.", "description": "L'enfant reproduit 6 mouvements différents qui mobilisent la bouche et le visage (ex : tirer la langue, souffler, faire des grimaces), montrant ainsi une capacité à imiter des expressions faciales et des mouvements orofaciaux essentiels au développement du langage et de la communication non verbale.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Cognition",
           "description": "Cognition",
           "items": [
-            {"name": "1", "description": "Regroupe ou classe des objets identiques.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Associe ou trie des images identiques.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Associe des images avec les objets correspondants.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Trie les objets en fonction de leur couleur.", "etat": "NON_COTE"}
+            {"name": "Regroupe ou classe des objets identiques.", "description": "L'enfant est capable de regrouper ou de classer des objets identiques, montrant ainsi une capacité à reconnaître les similarités, à organiser son environnement et à développer des compétences de catégorisation essentielles à la pensée logique.", "etat": "NON_COTE"},
+            {"name": "Associe ou trie des images identiques.", "description": "L'enfant associe ou trie des images identiques, ce qui indique une bonne perception visuelle, une mémoire de travail efficace et une capacité à faire des liens entre des représentations similaires.", "etat": "NON_COTE"},
+            {"name": "Associe des images avec les objets correspondants.", "description": "L'enfant est capable d'associer des images à leurs objets correspondants, démontrant une compréhension de la représentation symbolique et une capacité à relier le concret à l'abstrait.", "etat": "NON_COTE"},
+            {"name": "Trie les objets en fonction de leur couleur.", "description": "L'enfant trie des objets selon leur couleur, ce qui montre une capacité à observer, comparer et classer selon un critère précis, étape importante dans le développement de la pensée logique et de la discrimination visuelle.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Jeu",
           "description": "Jeu",
           "items": [
-            {"name": "1", "description": "Ajuste son comportement en fonction de cinq objets différents.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Joue seul et correctement avec 10 jouets nécessitant une action simple.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Utilise de manière autonome des jouets demandant des actions répétitives sur différents objets (ex. : pyramide d’anneaux, gobelets empilables).", "etat": "NON_COTE"},
-            {"name": "4", "description": "Adopte des comportements de jeu adaptés avec divers jouets simples (ex. : lancer une balle, empiler des cubes, insérer des bâtonnets dans des trous, faire rouler une voiture).", "etat": "NON_COTE"},
-            {"name": "5", "description": "Joue seul avec des jouets nécessitant deux gestes différents (ex. : enlever, mettre dedans).", "etat": "NON_COTE"},
-            {"name": "6", "description": "Manipule de manière autonome des jouets nécessitant plusieurs actions variées (ex. : insérer, ouvrir, retirer, fermer).", "etat": "NON_COTE"},
-            {"name": "7", "description": "Utilise des objets pour réaliser des actions habituelles sur lui-même.", "etat": "NON_COTE"},
-            {"name": "8", "description": "Termine son jeu et le remet à sa place.", "etat": "NON_COTE"}
+            {"name": "Ajuste son comportement en fonction de cinq objets différents.", "description": "L'enfant adapte son comportement de jeu en fonction de la nature de cinq objets différents, montrant ainsi une capacité d'observation, de flexibilité cognitive et d'adaptation aux propriétés des objets manipulés.", "etat": "NON_COTE"},
+            {"name": "Joue seul et correctement avec 10 jouets nécessitant une action simple.", "description": "L'enfant est capable de jouer seul et de manière appropriée avec dix jouets différents qui requièrent chacun une action simple, ce qui témoigne d'une autonomie dans le jeu et d'une compréhension des fonctions de base des objets ludiques.", "etat": "NON_COTE"},
+            {"name": "Utilise de manière autonome des jouets demandant des actions répétitives sur différents objets (ex. : pyramide d'anneaux, gobelets empilables).", "description": "L'enfant utilise de façon autonome des jouets qui nécessitent des actions répétitives (comme empiler, insérer, assembler) sur différents objets, illustrant ainsi la persévérance, la coordination motrice et la compréhension des séquences d'actions.", "etat": "NON_COTE"},
+            {"name": "Adopte des comportements de jeu adaptés avec divers jouets simples (ex. : lancer une balle, empiler des cubes, insérer des bâtonnets dans des trous, faire rouler une voiture).", "description": "L'enfant adopte des comportements de jeu appropriés avec une variété de jouets simples, tels que lancer une balle, empiler des cubes, insérer des bâtonnets ou faire rouler une voiture, montrant ainsi une diversité de compétences motrices et ludiques.", "etat": "NON_COTE"},
+            {"name": "Joue seul avec des jouets nécessitant deux gestes différents (ex. : enlever, mettre dedans).", "description": "L'enfant joue de façon autonome avec des jouets qui requièrent la réalisation de deux gestes différents, comme enlever et mettre dedans, ce qui indique une capacité à enchaîner des actions et à comprendre des séquences motrices simples.", "etat": "NON_COTE"},
+            {"name": "Manipule de manière autonome des jouets nécessitant plusieurs actions variées (ex. : insérer, ouvrir, retirer, fermer).", "description": "L'enfant manipule seul des jouets qui demandent plusieurs types d'actions (insérer, ouvrir, retirer, fermer), illustrant une bonne coordination, une planification motrice et une exploration active de son environnement.", "etat": "NON_COTE"},
+            {"name": "Utilise des objets pour réaliser des actions habituelles sur lui-même.", "description": "L'enfant utilise des objets pour effectuer des actions habituelles sur lui-même (ex : se brosser les cheveux avec une brosse jouet), montrant ainsi une compréhension de l'utilisation fonctionnelle des objets et une imitation des routines quotidiennes.", "etat": "NON_COTE"},
+            {"name": "Termine son jeu et le remet à sa place.", "description": "L'enfant termine son activité de jeu et range le jouet à sa place, ce qui témoigne d'une capacité à suivre une routine, à respecter l'ordre et à développer des habitudes d'autonomie.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Motricité fine",
           "description": "Motricité fine",
           "items": [
-            {"name": "1", "description": "Insère une ou deux formes dans un trieur.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Empile des anneaux sur leur socle.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Assemble trois pièces d’un puzzle avec des poignées en bois.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Insère des bâtonnets dans une planche percée de trous.", "etat": "NON_COTE"},
-            {"name": "5", "description": "Appuie sur les boutons de cinq jouets à effet sonore ou lumineux.", "etat": "NON_COTE"},
-            {"name": "6", "description": "Sépare des perles emboîtables ou des briques Duplo.", "etat": "NON_COTE"},
-            {"name": "7", "description": "Saisit les objets avec une pince digitale ou trois doigts selon leur taille et leur forme.", "etat": "NON_COTE"},
-            {"name": "8", "description": "Empile trois gros cubes ou gobelets pour former une tour.", "etat": "NON_COTE"},
-            {"name": "9", "description": "Trace des marques, lignes, gribouillages et points avec des feutres ou crayons de couleur.", "etat": "NON_COTE"},
-            {"name": "10", "description": "Frappe avec un marteau jouet sur des balles ou chevilles.", "etat": "NON_COTE"},
-            {"name": "11", "description": "Ramasse avec une pelle, ratisse et verse du sable, de l’eau ou du riz.", "etat": "NON_COTE"},
-            {"name": "12", "description": "Empile de grosses briques Lego.", "etat": "NON_COTE"}
+            {"name": "Insère une ou deux formes dans un trieur.", "description": "L'enfant est capable d'insérer une ou deux formes dans un trieur, montrant ainsi une coordination œil-main, une précision gestuelle et une compréhension des relations spatiales.", "etat": "NON_COTE"},
+            {"name": "Empile des anneaux sur leur socle.", "description": "L'enfant empile des anneaux sur leur socle, ce qui indique une bonne motricité fine, une capacité à planifier des gestes et à comprendre la notion d'empilement.", "etat": "NON_COTE"},
+            {"name": "Assemble trois pièces d'un puzzle avec des poignées en bois.", "description": "L'enfant assemble trois pièces d'un puzzle muni de poignées en bois, illustrant une capacité à résoudre des problèmes simples, à manipuler des objets et à reconnaître des formes.", "etat": "NON_COTE"},
+            {"name": "Insère des bâtonnets dans une planche percée de trous.", "description": "L'enfant insère des bâtonnets dans une planche percée de trous, montrant une précision dans le geste, une coordination motrice et une compréhension des relations entre les objets.", "etat": "NON_COTE"},
+            {"name": "Appuie sur les boutons de cinq jouets à effet sonore ou lumineux.", "description": "L'enfant appuie sur les boutons de cinq jouets différents produisant des sons ou de la lumière, ce qui montre une exploration sensorielle, une curiosité et une compréhension de la relation de cause à effet.", "etat": "NON_COTE"},
+            {"name": "Sépare des perles emboîtables ou des briques Duplo.", "description": "L'enfant sépare des perles emboîtables ou des briques Duplo, illustrant une force de préhension adaptée, une motricité fine développée et une capacité à manipuler des objets de différentes tailles.", "etat": "NON_COTE"},
+            {"name": "Saisit les objets avec une pince digitale ou trois doigts selon leur taille et leur forme.", "description": "L'enfant saisit des objets en utilisant une pince digitale ou trois doigts, en fonction de la taille et de la forme des objets, ce qui témoigne d'une adaptation de la préhension et d'une bonne discrimination tactile.", "etat": "NON_COTE"},
+            {"name": "Empile trois gros cubes ou gobelets pour former une tour.", "description": "L'enfant empile trois gros cubes ou gobelets pour former une tour, montrant une planification motrice, une coordination et une compréhension de la stabilité des structures.", "etat": "NON_COTE"},
+            {"name": "Trace des marques, lignes, gribouillages et points avec des feutres ou crayons de couleur.", "description": "L'enfant trace des marques, des lignes, des gribouillages et des points à l'aide de feutres ou de crayons de couleur, ce qui indique une exploration graphique, une motricité fine et une créativité en développement.", "etat": "NON_COTE"},
+            {"name": "Frappe avec un marteau jouet sur des balles ou chevilles.", "description": "L'enfant utilise un marteau jouet pour frapper sur des balles ou des chevilles, montrant une coordination œil-main, une force contrôlée et une compréhension de l'utilisation d'outils.", "etat": "NON_COTE"},
+            {"name": "Ramasse avec une pelle, ratisse et verse du sable, de l'eau ou du riz.", "description": "L'enfant utilise une pelle pour ramasser, ratisser et verser du sable, de l'eau ou du riz, illustrant une coordination motrice, une exploration sensorielle et une capacité à manipuler différents matériaux.", "etat": "NON_COTE"},
+            {"name": "Empile de grosses briques Lego.", "description": "L'enfant empile de grosses briques Lego, ce qui montre une capacité à manipuler des objets de différentes tailles, à planifier des actions et à construire des structures simples.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Motricité globale",
           "description": "Motricité globale",
           "items": [
-            {"name": "1", "description": "Frappe un gros ballon avec le pied.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Monte et descend des marches avec appui, sans alterner les pieds.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Grimpe sur un ou deux barreaux de l’échelle d’un toboggan.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Monte et descend sur des meubles.", "etat": "NON_COTE"},
-            {"name": "5", "description": "Réagit pour se stabiliser lorsqu’il perd l’équilibre.", "etat": "NON_COTE"},
-            {"name": "6", "description": "Évite les obstacles au sol au lieu de marcher dessus.", "etat": "NON_COTE"},
-            {"name": "7", "description": "Lance une balle ou un sac de graines dans une direction.", "etat": "NON_COTE"},
-            {"name": "8", "description": "Fait rouler une balle vers quelqu’un et la reçoit en retour.", "etat": "NON_COTE"}
+            {"name": "Frappe un gros ballon avec le pied.", "description": "L'enfant frappe un gros ballon avec le pied, montrant une coordination motrice globale, un équilibre et une capacité à viser une cible.", "etat": "NON_COTE"},
+            {"name": "Monte et descend des marches avec appui, sans alterner les pieds.", "description": "L'enfant monte et descend des marches en s'appuyant sur une rampe ou un support, sans alterner les pieds, ce qui indique une acquisition progressive de l'équilibre et de la motricité globale.", "etat": "NON_COTE"},
+            {"name": "Grimpe sur un ou deux barreaux de l'échelle d'un toboggan.", "description": "L'enfant grimpe sur un ou deux barreaux de l'échelle d'un toboggan, montrant une force musculaire, une coordination et une prise de risque contrôlée dans le jeu.", "etat": "NON_COTE"},
+            {"name": "Monte et descend sur des meubles.", "description": "L'enfant monte et descend sur des meubles, ce qui témoigne d'une exploration de l'environnement, d'une confiance en ses capacités motrices et d'une supervision nécessaire pour la sécurité.", "etat": "NON_COTE"},
+            {"name": "Réagit pour se stabiliser lorsqu'il perd l'équilibre.", "description": "L'enfant réagit de façon appropriée pour se stabiliser lorsqu'il perd l'équilibre, montrant ainsi une conscience corporelle et une capacité à ajuster sa posture pour éviter la chute.", "etat": "NON_COTE"},
+            {"name": "Évite les obstacles au sol au lieu de marcher dessus.", "description": "L'enfant évite les obstacles au sol en les contournant plutôt qu'en marchant dessus, ce qui indique une anticipation motrice, une perception de l'espace et une adaptation de la trajectoire.", "etat": "NON_COTE"},
+            {"name": "Lance une balle ou un sac de graines dans une direction.", "description": "L'enfant lance une balle ou un sac de graines dans une direction donnée, montrant une coordination bras-épaule, une force contrôlée et une intention de viser.", "etat": "NON_COTE"},
+            {"name": "Fait rouler une balle vers quelqu'un et la reçoit en retour.", "description": "L'enfant fait rouler une balle vers une autre personne et la reçoit en retour, illustrant une capacité à initier et à maintenir un échange moteur simple, une coordination et une compréhension du jeu à deux.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Comportement",
           "description": "Comportement",
           "items": [
-            {"name": "1", "description": "Présente seulement quelques difficultés sévères du comportement.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Reste assis sur une chaise ou en face de l’adulte pendant une activité agréable sans difficulté pendant 1 à 2 minutes.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Participe volontiers à des jeux simples avec l’adulte, assis sur une chaise ou au sol, pendant 5 minutes.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Accepte la présence et l’interaction de l’adulte, avec peu de sollicitations, sans comportement problématique pendant 20 minutes.", "etat": "NON_COTE"},
-            {"name": "5", "description": "Interagit de manière appropriée avec les membres de sa famille, sans agressivité ni comportements inadaptés.", "etat": "NON_COTE"}
+            {"name": "Présente seulement quelques difficultés sévères du comportement.", "description": "L'enfant présente uniquement quelques difficultés sévères de comportement, ce qui peut se manifester par des réactions intenses mais peu fréquentes, nécessitant une observation et un accompagnement adaptés.", "etat": "NON_COTE"},
+            {"name": "Reste assis sur une chaise ou en face de l'adulte pendant une activité agréable sans difficulté pendant 1 à 2 minutes.", "description": "L'enfant est capable de rester assis sur une chaise ou en face de l'adulte pendant une activité agréable, sans difficulté, pendant 1 à 2 minutes, montrant ainsi une capacité d'attention, de régulation et de respect des consignes.", "etat": "NON_COTE"},
+            {"name": "Participe volontiers à des jeux simples avec l'adulte, assis sur une chaise ou au sol, pendant 5 minutes.", "description": "L'enfant participe de bon gré à des jeux simples avec l'adulte, assis sur une chaise ou au sol, pendant 5 minutes, ce qui indique une motivation à interagir, une capacité à suivre une activité dirigée et à maintenir l'attention.", "etat": "NON_COTE"},
+            {"name": "Accepte la présence et l'interaction de l'adulte, avec peu de sollicitations, sans comportement problématique pendant 20 minutes.", "description": "L'enfant accepte la présence et l'interaction de l'adulte, avec peu de sollicitations, sans présenter de comportement problématique pendant 20 minutes, montrant ainsi une tolérance à la frustration et une adaptation au cadre social.", "etat": "NON_COTE"},
+            {"name": "Interagit de manière appropriée avec les membres de sa famille, sans agressivité ni comportements inadaptés.", "description": "L'enfant interagit de façon appropriée avec les membres de sa famille, sans agressivité ni comportements inadaptés, ce qui témoigne d'une intégration des règles sociales et d'une gestion émotionnelle adaptée dans le cercle familial.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Autonomie personnelle : repas",
           "description": "Autonomie personnelle : repas",
           "items": [
-            {"name": "1", "description": "Prend ses repas et ses collations à table.", "etat": "NON_COTE"},
-            {"name": "2", "description": "Mange de façon autonome.", "etat": "NON_COTE"},
-            {"name": "3", "description": "Boit dans un verre.", "etat": "NON_COTE"},
-            {"name": "4", "description": "Mange avec une cuillère.", "etat": "NON_COTE"},
-            {"name": "5", "description": "Utilise une fourchette.", "etat": "NON_COTE"},
-            {"name": "6", "description": "Consomme des aliments de textures, types et groupes variés.", "etat": "NON_COTE"},
-            {"name": "7", "description": "Accepte la présence de nouveaux aliments dans son assiette.", "etat": "NON_COTE"},
-            {"name": "8", "description": "Boit avec une paille.", "etat": "NON_COTE"}
+            {"name": "Prend ses repas et ses collations à table.", "description": "L'enfant prend ses repas et ses collations à table, ce qui montre une intégration des routines alimentaires, une capacité à rester assis et à respecter le cadre du repas.", "etat": "NON_COTE"},
+            {"name": "Mange de façon autonome.", "description": "L'enfant mange de façon autonome, utilisant ses mains ou des couverts selon ses capacités, ce qui témoigne d'une indépendance croissante dans les activités de la vie quotidienne.", "etat": "NON_COTE"},
+            {"name": "Boit dans un verre.", "description": "L'enfant boit dans un verre, montrant une coordination motrice fine, une gestion du geste et une adaptation à l'utilisation d'ustensiles de la vie courante.", "etat": "NON_COTE"},
+            {"name": "Mange avec une cuillère.", "description": "L'enfant mange avec une cuillère, ce qui indique une acquisition des gestes alimentaires de base et une autonomie dans la prise des repas.", "etat": "NON_COTE"},
+            {"name": "Utilise une fourchette.", "description": "L'enfant utilise une fourchette pour manger, montrant une progression dans la maîtrise des couverts et une motricité fine adaptée à l'alimentation.", "etat": "NON_COTE"},
+            {"name": "Consomme des aliments de textures, types et groupes variés.", "description": "L'enfant consomme des aliments de différentes textures, types et groupes, ce qui témoigne d'une ouverture alimentaire, d'une curiosité gustative et d'une capacité à diversifier son alimentation.", "etat": "NON_COTE"},
+            {"name": "Accepte la présence de nouveaux aliments dans son assiette.", "description": "L'enfant accepte la présence de nouveaux aliments dans son assiette, même s'il ne les goûte pas toujours, montrant une tolérance à la nouveauté et une adaptation progressive aux changements alimentaires.", "etat": "NON_COTE"},
+            {"name": "Boit avec une paille.", "description": "L'enfant boit avec une paille, ce qui indique une coordination bucco-faciale, une capacité à utiliser différents ustensiles et une exploration des modes d'alimentation.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Autonomie personnelle : habillage",
           "description": "Autonomie personnelle : habillage",
           "items": [
-            {"name": "9", "description": "Retire tous ses vêtements avec assistance.", "etat": "NON_COTE"},
-            {"name": "10", "description": "Enfile tous ses vêtements avec aide.", "etat": "NON_COTE"}
+            {"name": "Retire tous ses vêtements avec assistance.", "description": "L'enfant retire tous ses vêtements avec l'aide d'un adulte, montrant une participation active au processus d'habillage et une compréhension des étapes nécessaires pour se dévêtir, même si une assistance est encore requise.", "etat": "NON_COTE"},
+            {"name": "Enfile tous ses vêtements avec aide.", "description": "L'enfant enfile tous ses vêtements avec l'aide d'un adulte, ce qui indique une progression vers l'autonomie dans l'habillage, une coordination motrice et une volonté de participer aux routines quotidiennes.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Autonomie personnelle : toilette",
           "description": "Autonomie personnelle : toilette",
           "items": [
-            {"name": "11", "description": "Passe ses mains sous l’eau du robinet.", "etat": "NON_COTE"},
-            {"name": "12", "description": "S’essuie les mains avec une serviette.", "etat": "NON_COTE"},
-            {"name": "13", "description": "Se lave en se frottant avec un gant de toilette ou une serviette.", "etat": "NON_COTE"},
-            {"name": "14", "description": "Accepte le peigne ou la brosse pour se coiffer.", "etat": "NON_COTE"},
-            {"name": "15", "description": "Participe au brossage en utilisant une brosse à cheveux ou un peigne.", "etat": "NON_COTE"},
-            {"name": "16", "description": "Porte la brosse à dents à sa bouche.", "etat": "NON_COTE"}
+            {"name": "Passe ses mains sous l'eau du robinet.", "description": "L'enfant passe ses mains sous l'eau du robinet, montrant une initiation à l'hygiène des mains et une compréhension des routines de propreté de base.", "etat": "NON_COTE"},
+            {"name": "S'essuie les mains avec une serviette.", "description": "L'enfant s'essuie les mains avec une serviette après les avoir mouillées, ce qui témoigne d'une intégration des gestes d'hygiène et d'une autonomie croissante dans les soins personnels.", "etat": "NON_COTE"},
+            {"name": "Se lave en se frottant avec un gant de toilette ou une serviette.", "description": "L'enfant se lave en se frottant avec un gant de toilette ou une serviette, montrant une capacité à participer activement à sa toilette corporelle et à comprendre l'importance de l'hygiène.", "etat": "NON_COTE"},
+            {"name": "Accepte le peigne ou la brosse pour se coiffer.", "description": "L'enfant accepte que l'on utilise un peigne ou une brosse pour se coiffer, ce qui indique une tolérance au contact et une familiarisation avec les routines de soin corporel.", "etat": "NON_COTE"},
+            {"name": "Participe au brossage en utilisant une brosse à cheveux ou un peigne.", "description": "L'enfant participe activement au brossage de ses cheveux en utilisant une brosse ou un peigne, montrant une volonté d'autonomie et une motricité fine adaptée aux gestes de soin.", "etat": "NON_COTE"},
+            {"name": "Porte la brosse à dents à sa bouche.", "description": "L'enfant porte la brosse à dents à sa bouche, initiant ainsi le geste du brossage des dents, ce qui constitue une étape importante vers l'autonomie dans l'hygiène bucco-dentaire.", "etat": "NON_COTE"}
           ]
         },
         {
           "name": "Autonomie personnelle : tâches ménagères",
           "description": "Autonomie personnelle : tâches ménagères",
           "items": [
-            {"name": "17", "description": "Dépose ses vêtements sales dans le panier à linge.", "etat": "NON_COTE"},
-            {"name": "18", "description": "Jette ses papiers à la poubelle.", "etat": "NON_COTE"}
+            {"name": "Dépose ses vêtements sales dans le panier à linge.", "description": "L'enfant dépose ses vêtements sales dans le panier à linge, montrant une compréhension des routines domestiques et une participation active à l'entretien de son environnement.", "etat": "NON_COTE"},
+            {"name": "Jette ses papiers à la poubelle.", "description": "L'enfant jette ses papiers à la poubelle, ce qui indique une intégration des gestes de propreté et une prise de conscience de la gestion des déchets au quotidien.", "etat": "NON_COTE"}
           ]
         }
       ]
