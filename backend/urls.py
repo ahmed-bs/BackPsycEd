@@ -9,4 +9,7 @@ urlpatterns = [
     path('items/', include('ProfileItem.urls')),
     path('domains/', include('ProfileDomain.urls')),
     path('', include('profiles.urls')),
+
+     # --- NEW PATH FOR GOALS ---
+    path('', include('goals.urls'))
 ]
