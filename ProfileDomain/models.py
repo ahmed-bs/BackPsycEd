@@ -1,19 +1,20 @@
 from django.db import models
-
-
+from django.utils import timezone
 
 class ProfileDomain(models.Model):
     profile_category = models.ForeignKey('ProfileCategory.ProfileCategory', on_delete=models.CASCADE, related_name='domains')
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    item_count = models.PositiveIntegerField(default=0, editable=False)  # Number of items
-    acquis_percentage = models.FloatField(default=0.0, editable=False)  # Percentage of Acquis items
+    item_count = models.PositiveIntegerField(default=0, editable=False)
+    acquis_percentage = models.FloatField(default=0.0, editable=False)
+    start_date = models.DateField(default=timezone.now)
+    last_evaluation_date = models.DateField(auto_now=True)
 
     def __str__(self):
         return f"{self.name} (Category: {self.profile_category})"
 
     def update_metrics(self):
-        """Update item_count and acquis_percentage."""
+        """Update item_count, acquis_percentage, and last_evaluation_date."""
         items = self.items.all()
         total_items = items.count()
         acquis_items = items.filter(etat='ACQUIS').count()

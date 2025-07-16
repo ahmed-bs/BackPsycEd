@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Goal, SubObjective
 from ProfileDomain.models import ProfileDomain
 from ProfileDomain.serializers import ProfileDomainSerializer
+from profiles.models import Profile
+from profiles.serializers import ProfileSerializer
 
 class SubObjectiveSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,20 +17,24 @@ class GoalSerializer(serializers.ModelSerializer):
     domain_id = serializers.PrimaryKeyRelatedField(
         queryset=ProfileDomain.objects.all(), source='domain', write_only=True, required=False, allow_null=True
     )
-
     domain = ProfileDomainSerializer(read_only=True)
+
+    profile_id = serializers.PrimaryKeyRelatedField(
+        queryset=Profile.objects.all(), source='profile', write_only=True
+    )
+    profile = ProfileSerializer(read_only=True)
 
     class Meta:
         model = Goal
         fields = [
-            'id', 'user', 'domain_id', 'domain', 'title', 'description',
+            'id', 'profile_id', 'profile', 'domain_id', 'domain', 'title', 'description',
             'target_date', 'priority', 'sub_objectives', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'user', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'profile']
 
     def create(self, validated_data):
         sub_objectives_data = validated_data.pop('sub_objectives', [])
-        goal = Goal.objects.create(**validated_data) # 'domain' instance is here from domain_id's source
+        goal = Goal.objects.create(**validated_data) 
         for sub_objective_data in sub_objectives_data:
             SubObjective.objects.create(goal=goal, **sub_objective_data)
         return goal
@@ -37,7 +43,9 @@ class GoalSerializer(serializers.ModelSerializer):
         sub_objectives_data = validated_data.pop('sub_objectives', None)
 
         if 'domain' in validated_data:
-            instance.domain = validated_data.pop('domain') # Pop the instance that source='domain' created
+            instance.domain = validated_data.pop('domain') 
+        if 'profile' in validated_data:
+            instance.profile = validated_data.pop('profile')
 
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)

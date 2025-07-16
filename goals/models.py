@@ -1,10 +1,10 @@
 from django.db import models
 from django.conf import settings
 from ProfileDomain.models import ProfileDomain
-from authentification.models import CustomUser
+from profiles.models import Profile
 
 class Goal(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='goals')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='goals') # Removed null=True, blank=True
     domain = models.ForeignKey(
         ProfileDomain,
         on_delete=models.SET_NULL,
@@ -28,7 +28,7 @@ class Goal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return f"Goal for {self.profile.first_name} {self.profile.last_name}: {self.title}"
 
     class Meta:
         ordering = ['-created_at']

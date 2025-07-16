@@ -1,7 +1,27 @@
 from rest_framework import serializers
-from .models import ProfileDomain
+from profiles.models import Profile
+from ProfileCategory.models import ProfileCategory
+from ProfileDomain.models import ProfileDomain
+from ProfileItem.models import ProfileItem
+
+
+class ProfileItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfileItem
+        fields = ['id', 'name', 'description', 'etat', 'is_modified', 'modified_at', 'comentaire']
+        read_only_fields = ['id', 'is_modified', 'modified_at']
+
+    def validate_etat(self, value):
+        valid_etats = [choice[0] for choice in ProfileItem.ETAT_CHOICES]
+        if value not in valid_etats:
+            raise serializers.ValidationError("Invalid etat. Must be one of: ACQUIS, PARTIEL, NON_ACQUIS, NON_COTE")
+        return value
+
 
 class ProfileDomainSerializer(serializers.ModelSerializer):
+    items = ProfileItemSerializer(many=True, read_only=True)
+
     class Meta:
         model = ProfileDomain
-        fields = ['id', 'name', 'description', 'profile_category_id']
+        fields = ['id', 'name', 'description', 'item_count', 'acquis_percentage', 'start_date', 'last_evaluation_date', 'items']
+        read_only_fields = ['id', 'item_count', 'acquis_percentage', 'start_date', 'last_evaluation_date']

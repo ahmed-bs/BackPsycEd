@@ -16,7 +16,7 @@ class ProfileItem(models.Model):
     ]
 
     profile_domain = models.ForeignKey(ProfileDomain, on_delete=models.CASCADE, related_name='items')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=500)
     description = models.TextField(blank=True, null=True)
     comentaire = models.TextField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)

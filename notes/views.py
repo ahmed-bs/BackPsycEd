@@ -3,27 +3,101 @@ from rest_framework.response import Response
 from .models import Note
 from .serializers import NoteSerializer
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
 import datetime
+from profiles.models import Profile, SharedProfilePermission
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class IsOwner(permissions.BasePermission):
+class IsProfilePermitted(permissions.BasePermission):
+    """
+    Custom permission to ensure user has appropriate permissions (view/edit/delete)
+    for the profile associated with the note.
+    Superusers have full access.
+    """
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            profile_id = request.data.get('profile_id')
+            if not profile_id:
+                raise permissions.PermissionDenied({"detail": "Profile ID is required for creating a note."})
+            
+            try:
+                profile = Profile.objects.get(id=profile_id)
+            except Profile.DoesNotExist:
+                raise permissions.PermissionDenied({"detail": "Profile not found."})
+
+            if request.user.is_superuser:
+                return True
+            
+            return SharedProfilePermission.objects.filter(
+                profile=profile,
+                shared_with=request.user,
+                permissions='edit'
+            ).exists()
+        
+        return request.user and request.user.is_authenticated
+
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
+        if request.user.is_superuser:
             return True
-        return obj.user == request.user
+
+        if not obj.profile:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return SharedProfilePermission.objects.filter(
+                profile=obj.profile,
+                shared_with=request.user,
+                permissions__in=['view', 'edit', 'share', 'delete']
+            ).exists()
+        else:
+            required_permission_for_action = 'edit'
+            if request.method == 'DELETE':
+                required_permission_for_action = 'delete'
+            
+            return SharedProfilePermission.objects.filter(
+                profile=obj.profile,
+                shared_with=request.user,
+                permissions=required_permission_for_action
+            ).exists()
 
 class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [permissions.IsAuthenticated, IsProfilePermitted]
 
     def get_queryset(self):
         user = self.request.user
-        if not user.is_authenticated:
-            return Note.objects.none()
+        queryset = Note.objects.all().prefetch_related('profile', 'author')
 
-        queryset = Note.objects.all()
+        if user.is_superuser:
+            return queryset
+
+        profile_id_param = self.request.query_params.get('profile_id')
+
+        if profile_id_param:
+            try:
+                requested_profile_id = int(profile_id_param)
+            except ValueError:
+                return Note.objects.none()
+
+            has_permission = SharedProfilePermission.objects.filter(
+                profile__id=requested_profile_id,
+                shared_with=user,
+                permissions__in=['view', 'edit', 'share', 'delete']
+            ).exists()
+
+            if has_permission:
+                queryset = queryset.filter(profile__id=requested_profile_id)
+            else:
+                return Note.objects.none()
+        else:
+            accessible_profile_ids = SharedProfilePermission.objects.filter(
+                shared_with=user,
+                permissions__in=['view', 'edit', 'share', 'delete']
+            ).values_list('profile__id', flat=True)
+            
+            queryset = queryset.filter(profile__id__in=accessible_profile_ids)
 
         search_query = self.request.query_params.get('search', None)
         if search_query is not None:
@@ -52,16 +126,41 @@ class NoteViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(created_at__date__lte=end_date)
             except ValueError:
                 pass
-
+        
         author_username = self.request.query_params.get('author_username', None)
         if author_username:
             try:
                 author_user = User.objects.get(username__iexact=author_username)
-                queryset = queryset.filter(user=author_user)
+                queryset = queryset.filter(author=author_user)
             except User.DoesNotExist:
                 queryset = queryset.none()
 
-        return queryset.order_by('-created_at')
+        return queryset.order_by('-created_at').distinct()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        profile_id = self.request.data.get('profile_id')
+        if not profile_id:
+            raise serializers.ValidationError({"profile_id": "This field is required to create a note."})
+        
+        try:
+            profile = Profile.objects.get(id=profile_id)
+        except Profile.DoesNotExist:
+            raise serializers.ValidationError({"profile_id": "Profile not found."})
+
+        if not self.request.user.is_superuser:
+            has_edit_permission = SharedProfilePermission.objects.filter(
+                profile=profile,
+                shared_with=self.request.user,
+                permissions='edit'
+            ).exists()
+            if not has_edit_permission:
+                raise permissions.PermissionDenied("You do not have permission to add notes to this profile.")
+
+        serializer.save(profile=profile, author=self.request.user)
+
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        instance.delete()
