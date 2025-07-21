@@ -124,6 +124,7 @@ class ProfileViewSet(viewsets.ViewSet):
             current_date = datetime.now().date()  # Use current date instead of hardcoding
             age = relativedelta(current_date, birth_date).years
 
+            image = request.FILES.get('image')  # Get the uploaded image file
             child_profile = Profile.objects.create(
                 first_name=request.data['first_name'],
                 last_name=request.data['last_name'],
@@ -136,7 +137,9 @@ class ProfileViewSet(viewsets.ViewSet):
                 diagnosis=request.data.get('diagnosis', ''),
                 notes=request.data.get('notes', ''),
                 is_active=True,
-                category=category
+                category=category,
+                created_by=request.user,
+                image=image  # Save the image
             )
 
             all_permissions = ['view', 'edit', 'share', 'delete']
@@ -156,7 +159,7 @@ class ProfileViewSet(viewsets.ViewSet):
                     {'error': f'Failed to assign template data: {str(e)}'},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
-            serializer = ProfileSerializer(child_profile)
+            serializer = ProfileSerializer(child_profile, context={'request': request})
             return Response(
                 {'message': 'Child profile created successfully', 'data': serializer.data},
                 status=status.HTTP_201_CREATED
@@ -179,7 +182,7 @@ class ProfileViewSet(viewsets.ViewSet):
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         profiles = Profile.objects.filter(shared_with__shared_with=user).distinct()
-        serializer = ProfileSerializer(profiles, many=True)
+        serializer = ProfileSerializer(profiles, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['put'], url_path='update')
@@ -223,8 +226,14 @@ class ProfileViewSet(viewsets.ViewSet):
             if 'is_active' in request.data:
                 child_profile.is_active = parse_bool(request.data['is_active'])
 
+            # Handle image update
+            if 'image' in request.FILES:
+                if child_profile.image:
+                    child_profile.image.delete(save=False)
+                child_profile.image = request.FILES['image']
+
             child_profile.save()
-            serializer = ProfileSerializer(child_profile)
+            serializer = ProfileSerializer(child_profile, context={'request': request})
             return Response(
                 {'message': 'Child profile updated successfully', 'data': serializer.data},
                 status=status.HTTP_200_OK
@@ -239,17 +248,11 @@ class ProfileViewSet(viewsets.ViewSet):
         try:
             profile = get_object_or_404(Profile, pk=pk)
 
-            if not request.user.is_superuser:
-                has_share_permission = SharedProfilePermission.objects.filter(
-                    profile=profile,
-                    shared_with=request.user,
-                    permissions='share'
-                ).exists()
-                if not has_share_permission:
-                    return Response(
-                        {'error': 'You are not authorized to share this profile'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+            if not (request.user.is_superuser or profile.created_by == request.user):
+                return Response(
+                    {'error': 'Only the profile creator can share this profile'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
             required_fields = ['shared_with', 'permissions']
             if any(field not in request.data for field in required_fields):
@@ -270,10 +273,10 @@ class ProfileViewSet(viewsets.ViewSet):
                 )
 
             permissions = request.data['permissions']
-            valid_permissions = ['view', 'edit', 'share']
+            valid_permissions = ['view', 'edit']
             if not isinstance(permissions, list) or not all(perm in valid_permissions for perm in permissions):
                 return Response(
-                    {'error': 'Invalid permissions. Must be a list of "view", "edit", or "share".'},
+                    {'error': 'Invalid permissions. Must be a list of "view" or "edit".'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -326,7 +329,7 @@ class ProfileViewSet(viewsets.ViewSet):
                 )
 
             profiles = Profile.objects.all()
-            serializer = ProfileSerializer(profiles, many=True)
+            serializer = ProfileSerializer(profiles, many=True, context={'request': request})
             return Response(
                 {'message': 'Profiles retrieved successfully', 'data': serializer.data},
                 status=status.HTTP_200_OK
@@ -345,7 +348,7 @@ class ProfileViewSet(viewsets.ViewSet):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            serializer = ProfileSerializer(child_profile)
+            serializer = ProfileSerializer(child_profile, context={'request': request})
             return Response(
                 {'message': 'Profile retrieved successfully', 'data': serializer.data},
                 status=status.HTTP_200_OK

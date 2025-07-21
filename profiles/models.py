@@ -18,16 +18,28 @@ class Profile(models.Model):
     progress = models.CharField(max_length=100, default='En progrès')
     recommended_strategies = models.JSONField(default=list, blank=True)
     image_url = models.URLField(max_length=500, blank=True, null=True)
+    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     bio = models.BinaryField(blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='created_profiles',
+        null=True
+    )
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     @property
     def associated_users(self):
         """Return all users associated with this profile via SharedProfilePermission."""
         return CustomUser.objects.filter(shared_profiles__profile=self).distinct()
+
+    def delete(self, *args, **kwargs):
+        if self.image:
+            self.image.delete(save=False)
+        super().delete(*args, **kwargs)
 
 class SharedProfilePermission(models.Model):
     PERMISSION_CHOICES = [

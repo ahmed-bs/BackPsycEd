@@ -44,11 +44,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = [
-            'id', 'category', 'first_name', 'last_name', 'birth_date', 'diagnosis', 'notes',
-            'evaluation_score', 'objectives', 'progress', 'recommended_strategies', 'image_url',
-            'created_at', 'is_active', 'bio', 'gender', 'associated_users', 'categories'
-        ]
+        fields = '__all__'  # Ensure 'image' is included
 
     def get_associated_users(self, obj):
         return [user.username for user in obj.associated_users]

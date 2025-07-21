@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -9,10 +11,9 @@ urlpatterns = [
     path('items/', include('ProfileItem.urls')),
     path('domains/', include('ProfileDomain.urls')),
     path('', include('profiles.urls')),
-
-     # --- NEW PATH FOR GOALS ---
     path('', include('goals.urls')),
-    
-    # --- NEW PATH FOR NOTES ---
-    path('', include('notes.urls'))
+    path('', include('notes.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
