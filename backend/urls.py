@@ -13,6 +13,7 @@ urlpatterns = [
     path('', include('profiles.urls')),
     path('', include('goals.urls')),
     path('', include('notes.urls')),
+    path('', include('strategies.urls')),
 ]
 
 if settings.DEBUG:
