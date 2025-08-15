@@ -25,6 +25,6 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = [
             'id', 'profile_id', 'profile', 'author_username', 'content', 
-            'is_important', 'created_at', 'updated_at'
+            'content_ar', 'is_important', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'profile', 'author_username']

@@ -84,14 +84,16 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
             required_fields = ['name']
             if any(field not in request.data for field in required_fields):
                 return Response(
-                    {'error': f'Missing required fields:{"name": ", ".join(required_fields)}'},
+                    {'error': f'Missing required fields:{"name": ", ".join(required_fields)}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
             category_data = {
                 'profile': profile,
                 'name': request.data['name'],
+                'name_ar': request.data.get('name_ar', ''),
                 'description': request.data.get('description', ''),
+                'description_ar': request.data.get('description_ar', ''),
             }
 
             category = ProfileCategory.objects.create(**category_data)
@@ -119,8 +121,12 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
 
             if 'name' in request.data:
                 category.name = request.data['name']
+            if 'name_ar' in request.data:
+                category.name_ar = request.data['name_ar']
             if 'description' in request.data:
                 category.description = request.data['description']
+            if 'description_ar' in request.data:
+                category.description_ar = request.data['description_ar']
             category.save()
 
             serializer = ProfileCategorySerializer(category)

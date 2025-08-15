@@ -7,7 +7,9 @@ from profiles.models import Profile
 class ProfileCategory(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='categories')
     name = models.CharField(max_length=100)
+    name_ar = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    description_ar = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

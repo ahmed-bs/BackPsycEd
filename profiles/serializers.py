@@ -35,7 +35,7 @@ class ProfileCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProfileCategory
-        fields = ['id', 'name', 'description', 'domains_count','created_at', 'items_count']
+        fields = ['id', 'name', 'name_ar', 'description', 'description_ar', 'domains_count','created_at', 'items_count']
         read_only_fields = ['id', 'domains_count', 'items_count']
 
 class ProfileSerializer(serializers.ModelSerializer):

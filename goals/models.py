@@ -13,7 +13,9 @@ class Goal(models.Model):
         blank=True 
     )
     title = models.CharField(max_length=255)
+    title_ar = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
+    description_ar = models.TextField(blank=True, null=True)
     target_date = models.DateField()
     priority = models.CharField(
         max_length=10,

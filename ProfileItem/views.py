@@ -93,8 +93,11 @@ class ProfileItemViewSet(viewsets.ViewSet):
             item_data = {
                 'profile_domain': domain,
                 'name': request.data['name'],
+                'name_ar': request.data.get('name_ar', ''),
                 'description': request.data.get('description', ''),
+                'description_ar': request.data.get('description_ar', ''),
                 'comentaire': request.data.get('comentaire', ''),
+                'commentaire_ar': request.data.get('commentaire_ar', ''),
                 'etat': request.data.get('etat', 'NON_COTE'),
             }
 
@@ -121,10 +124,16 @@ class ProfileItemViewSet(viewsets.ViewSet):
 
             if 'name' in request.data:
                 item.name = request.data['name']
+            if 'name_ar' in request.data:
+                item.name_ar = request.data['name_ar']
             if 'description' in request.data:
                 item.description = request.data['description']
+            if 'description_ar' in request.data:
+                item.description_ar = request.data['description_ar']
             if 'comentaire' in request.data:
                 item.comentaire = request.data['comentaire']
+            if 'commentaire_ar' in request.data:
+                item.commentaire_ar = request.data['commentaire_ar']
             if 'etat' in request.data:
                 etat = request.data['etat']
                 if etat not in [choice[0] for choice in ProfileItem.ETAT_CHOICES]:

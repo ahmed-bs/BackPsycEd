@@ -1,6 +1,6 @@
 [{
   "category_name": "Communication",
-  "category_description": "Communication Expressive",
+  "category_description": "Compétences liées à l'expression verbale, non verbale et alternative permettant à l'enfant de transmettre ses besoins, ses idées et ses émotions aux autres.",
   "domains": [
     {
       "name": "Communication Expressive",
@@ -256,12 +256,7 @@
           "etat": "NON_COTE"
         }
       ]
-    }
-  ]
-},{
-  "category_name": "Communication",
-  "category_description": "Communication Réceptive (Compréhension)",
-  "domains": [
+    },
     {
       "name": "Communication Réceptive",
       "description": "Communication Réceptive (Compréhension)",

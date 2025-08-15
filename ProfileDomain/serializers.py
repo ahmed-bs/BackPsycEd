@@ -23,5 +23,5 @@ class ProfileDomainSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProfileDomain
-        fields = ['id', 'name', 'description', 'item_count', 'acquis_percentage', 'start_date', 'last_evaluation_date', 'items']
+        fields = ['id', 'name', 'name_ar', 'description', 'description_ar', 'item_count', 'acquis_percentage', 'start_date', 'last_evaluation_date', 'items']
         read_only_fields = ['id', 'item_count', 'acquis_percentage', 'start_date', 'last_evaluation_date']

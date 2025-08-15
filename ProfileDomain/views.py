@@ -122,7 +122,9 @@ class ProfileDomainViewSet(viewsets.ViewSet):
             domain_data = {
                 'profile_category': category,
                 'name': request.data['name'],
+                'name_ar': request.data.get('name_ar', ''),
                 'description': request.data.get('description', ''),
+                'description_ar': request.data.get('description_ar', ''),
             }
 
             domain = ProfileDomain.objects.create(**domain_data)
@@ -147,8 +149,12 @@ class ProfileDomainViewSet(viewsets.ViewSet):
 
             if 'name' in request.data:
                 domain.name = request.data['name']
+            if 'name_ar' in request.data:
+                domain.name_ar = request.data['name_ar']
             if 'description' in request.data:
                 domain.description = request.data['description']
+            if 'description_ar' in request.data:
+                domain.description_ar = request.data['description_ar']
             domain.save()
 
             serializer = ProfileDomainSerializer(domain)

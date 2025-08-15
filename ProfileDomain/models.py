@@ -4,7 +4,9 @@ from django.utils import timezone
 class ProfileDomain(models.Model):
     profile_category = models.ForeignKey('ProfileCategory.ProfileCategory', on_delete=models.CASCADE, related_name='domains')
     name = models.CharField(max_length=100)
+    name_ar = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    description_ar = models.TextField(blank=True, null=True)
     item_count = models.PositiveIntegerField(default=0, editable=False)
     acquis_percentage = models.FloatField(default=0.0, editable=False)
     start_date = models.DateField(default=timezone.now)

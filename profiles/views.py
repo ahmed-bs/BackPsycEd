@@ -27,7 +27,12 @@ class ProfileViewSet(viewsets.ViewSet):
         """Assign predefined categories, domains, and items to a profile."""
         try:
             # Load TEMPLATE_DATA from JSON file
-            template_file = 'template_kids_data.json' if age <= 5 else 'template_adulte_data.json'
+            if age <= 5:
+                template_file = 'template_kids_data.json'
+            elif age <= 18:
+                template_file = 'template_jeunes_data.json'
+            else:
+                template_file = 'template_adulte_data.json'
             template_file_path = os.path.join(os.path.dirname(__file__), 'templates', template_file)
             with open(template_file_path, 'r',encoding='utf-8') as file:
                 TEMPLATE_DATA = json.load(file)

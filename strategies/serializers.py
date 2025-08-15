@@ -12,7 +12,7 @@ class StrategySerializer(serializers.ModelSerializer):
         fields = [
             'id', 'profile', 'profile_name',
             'author', 'author_username',    
-            'title', 'description', 'status', 'responsible',
+            'title', 'title_ar', 'description', 'description_ar', 'status', 'responsible',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'author', 'author_username', 'profile_name', 'created_at', 'updated_at']

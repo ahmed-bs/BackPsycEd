@@ -23,6 +23,11 @@ class Note(models.Model):
     content = models.TextField(
         verbose_name="Note Content"
     )
+    content_ar = models.TextField(
+        verbose_name="Note Content (Arabic)",
+        blank=True,
+        null=True
+    )
     is_important = models.BooleanField(
         default=False,
         verbose_name="Is Important Note"

@@ -27,7 +27,7 @@ class GoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goal
         fields = [
-            'id', 'profile_id', 'profile', 'domain_id', 'domain', 'title', 'description',
+            'id', 'profile_id', 'profile', 'domain_id', 'domain', 'title', 'title_ar', 'description', 'description_ar',
             'target_date', 'priority', 'sub_objectives', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'profile']
@@ -48,7 +48,9 @@ class GoalSerializer(serializers.ModelSerializer):
             instance.profile = validated_data.pop('profile')
 
         instance.title = validated_data.get('title', instance.title)
+        instance.title_ar = validated_data.get('title_ar', instance.title_ar)
         instance.description = validated_data.get('description', instance.description)
+        instance.description_ar = validated_data.get('description_ar', instance.description_ar)
         instance.target_date = validated_data.get('target_date', instance.target_date)
         instance.priority = validated_data.get('priority', instance.priority)
         instance.save()

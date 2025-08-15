@@ -7,7 +7,9 @@ class Strategy(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='authored_strategies')
 
     title = models.CharField(max_length=255)
+    title_ar = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
+    description_ar = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=50, default='Actif')
     responsible = models.CharField(max_length=100, blank=True, null=True)
 
