@@ -9,6 +9,7 @@ from profiles.serializers import  ProfileDomainSerializer
 from rest_framework import status, viewsets
 from django.db.models import Q, Count, F
 from rest_framework.decorators import action
+from .translation_utils import translation_service
 
 
 class ProfileDomainViewSet(viewsets.ViewSet):
@@ -112,20 +113,28 @@ class ProfileDomainViewSet(viewsets.ViewSet):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            required_fields = ['name']
-            if any(field not in request.data for field in required_fields):
+            # Check if at least one of name or name_ar is provided
+            name = request.data.get('name', '').strip()
+            name_ar = request.data.get('name_ar', '').strip()
+            
+            if not name and not name_ar:
                 return Response(
-                    {'error': f'Missing required fields: {", ".join(required_fields)}'},
+                    {'error': 'Either name or name_ar must be provided'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
+            # Prepare domain data with translation
             domain_data = {
                 'profile_category': category,
-                'name': request.data['name'],
-                'name_ar': request.data.get('name_ar', ''),
-                'description': request.data.get('description', ''),
-                'description_ar': request.data.get('description_ar', ''),
+                'name': name,
+                'name_ar': name_ar,
+                'description': request.data.get('description', '').strip(),
+                'description_ar': request.data.get('description_ar', '').strip(),
             }
+
+            # Apply automatic translation for name and description
+            fields_to_translate = ['name', 'description']
+            domain_data = translation_service.auto_translate_fields(domain_data, fields_to_translate)
 
             domain = ProfileDomain.objects.create(**domain_data)
             serializer = ProfileDomainSerializer(domain)
@@ -147,14 +156,32 @@ class ProfileDomainViewSet(viewsets.ViewSet):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
+            # Prepare update data with current values as fallback
+            update_data = {
+                'name': getattr(domain, 'name', ''),
+                'name_ar': getattr(domain, 'name_ar', ''),
+                'description': getattr(domain, 'description', ''),
+                'description_ar': getattr(domain, 'description_ar', ''),
+            }
+
+            # Update with new values from request
             if 'name' in request.data:
-                domain.name = request.data['name']
+                update_data['name'] = request.data['name'].strip()
             if 'name_ar' in request.data:
-                domain.name_ar = request.data['name_ar']
+                update_data['name_ar'] = request.data['name_ar'].strip()
             if 'description' in request.data:
-                domain.description = request.data['description']
+                update_data['description'] = request.data['description'].strip()
             if 'description_ar' in request.data:
-                domain.description_ar = request.data['description_ar']
+                update_data['description_ar'] = request.data['description_ar'].strip()
+
+            # Apply automatic translation for name and description
+            fields_to_translate = ['name', 'description']
+            update_data = translation_service.auto_translate_fields(update_data, fields_to_translate)
+
+            # Update domain fields
+            for field, value in update_data.items():
+                setattr(domain, field, value)
+            
             domain.save()
 
             serializer = ProfileDomainSerializer(domain)

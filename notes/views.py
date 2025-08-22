@@ -7,6 +7,7 @@ import datetime
 from profiles.models import Profile, SharedProfilePermission
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .translation_utils import translation_service
 
 User = get_user_model()
 
@@ -156,10 +157,61 @@ class NoteViewSet(viewsets.ModelViewSet):
             if not has_edit_permission:
                 raise permissions.PermissionDenied("You do not have permission to add notes to this profile.")
 
-        serializer.save(profile=profile, author=self.request.user)
+        # Get the validated data
+        validated_data = serializer.validated_data
+        
+        # Prepare note data with translation
+        note_data = {
+            'content': validated_data.get('content', '').strip(),
+            'content_ar': validated_data.get('content_ar', '').strip(),
+        }
+
+        # Apply automatic translation for content
+        fields_to_translate = ['content']
+        note_data = translation_service.auto_translate_fields(note_data, fields_to_translate)
+
+        # Save the note with translated data
+        note = serializer.save(
+            profile=profile, 
+            author=self.request.user,
+            content=note_data['content'],
+            content_ar=note_data['content_ar']
+        )
 
     def perform_update(self, serializer):
         instance = self.get_object()
+        
+        # Get the validated data
+        validated_data = serializer.validated_data
+        
+        # Prepare update data
+        update_data = {}
+        if 'content' in validated_data:
+            update_data['content'] = validated_data['content'].strip()
+        if 'content_ar' in validated_data:
+            update_data['content_ar'] = validated_data['content_ar'].strip()
+
+        # Apply automatic translation for updated fields
+        fields_to_translate = []
+        if 'content' in update_data or 'content_ar' in update_data:
+            fields_to_translate.append('content')
+
+        if fields_to_translate:
+            # Get current values and merge with updates
+            current_data = {
+                'content': instance.content,
+                'content_ar': instance.content_ar or '',
+            }
+            current_data.update(update_data)
+            
+            # Apply translation
+            translated_data = translation_service.auto_translate_fields(current_data, fields_to_translate)
+            
+            # Update instance with translated data
+            for field in fields_to_translate:
+                setattr(instance, field, translated_data[field])
+                setattr(instance, f"{field}_ar", translated_data[f"{field}_ar"])
+
         serializer.save()
 
     def perform_destroy(self, instance):

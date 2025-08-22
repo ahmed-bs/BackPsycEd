@@ -42,21 +42,27 @@ class ProfileViewSet(viewsets.ViewSet):
                 category = ProfileCategory.objects.create(
                     profile=profile,
                     name=category_data["category_name"],
+                    name_ar=category_data.get("category_name_ar", ""),
                     description=category_data.get("category_description", ""),
+                    description_ar=category_data.get("category_description_ar", ""),
                 )
                 for domain_data in category_data["domains"]:
                     print(f"Assigning domain: {domain_data['name']}")
                     domain = ProfileDomain.objects.create(
                         profile_category=category,
                         name=domain_data["name"],
+                        name_ar=domain_data.get("name_ar", ""),
                         description=domain_data.get("description", ""),
+                        description_ar=domain_data.get("description_ar", ""),
                     )
                     for item_data in domain_data["items"]:
                         print(f"Assigning item: {item_data['name']}")
                         ProfileItem.objects.create(
                             profile_domain=domain,
                             name=item_data["name"],
+                            name_ar=item_data.get("name_ar", ""),
                             description=item_data.get("description", ""),
+                            description_ar=item_data.get("description_ar", ""),
                             etat=item_data.get("etat", "NON_COTE"),
                         )
                     domain.update_metrics()
@@ -68,11 +74,11 @@ class ProfileViewSet(viewsets.ViewSet):
         """Helper method to calculate autism category based on birth date."""
         current_date = datetime(2025, 5, 11).date()
         age = relativedelta(current_date, birth_date).years
-        if 0 <= age <= 2:
+        if 0 <= age <= 5:
             return 'Toddler'
-        elif 3 <= age <= 12:
+        elif 6 <= age <= 18:
             return 'Young Child'
-        elif 13 <= age <= 22:
+        elif 19 <= age :
             return 'Young Adult'
         else:
             raise ValueError('Age out of supported range (0-22 years).')

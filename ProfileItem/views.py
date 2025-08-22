@@ -7,6 +7,7 @@ from ProfileItem.models import ProfileItem
 from ProfileDomain.models import ProfileDomain
 from profiles.serializers import  ProfileItemSerializer
 from rest_framework import status, viewsets
+from .translation_utils import translation_service
 
 class ProfileItemViewSet(viewsets.ViewSet):
     authentication_classes = [TokenAuthentication]
@@ -53,11 +54,14 @@ class ProfileItemViewSet(viewsets.ViewSet):
                 {
                     'id': item['id'],
                     'name': item['name'],
+                    'name_ar': item['name_ar'],
                     'description': item['description'],
+                    'description_ar': item['description_ar'],
                     'etat': item['etat'],
                     'profile_domain_name': domain.name,
                     'profile_category_name': domain.profile_category.name,
                     'comentaire': item['comentaire'],
+                    'commentaire_ar': item['commentaire_ar'],
                 }
                 for item in serializer.data
             ]
@@ -83,23 +87,31 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            required_fields = ['name']
-            if any(field not in request.data for field in required_fields):
+            # Check if at least one of name or name_ar is provided
+            name = request.data.get('name', '').strip()
+            name_ar = request.data.get('name_ar', '').strip()
+            
+            if not name and not name_ar:
                 return Response(
-                    {'error': f'Missing required fields: {", ".join(required_fields)}'},
+                    {'error': 'Either name or name_ar must be provided'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
+            # Prepare item data with translation
             item_data = {
                 'profile_domain': domain,
-                'name': request.data['name'],
-                'name_ar': request.data.get('name_ar', ''),
-                'description': request.data.get('description', ''),
-                'description_ar': request.data.get('description_ar', ''),
-                'comentaire': request.data.get('comentaire', ''),
-                'commentaire_ar': request.data.get('commentaire_ar', ''),
+                'name': name,
+                'name_ar': name_ar,
+                'description': request.data.get('description', '').strip(),
+                'description_ar': request.data.get('description_ar', '').strip(),
+                'comentaire': request.data.get('comentaire', '').strip(),
+                'commentaire_ar': request.data.get('commentaire_ar', '').strip(),
                 'etat': request.data.get('etat', 'NON_COTE'),
             }
+
+            # Apply automatic translation for name, description, and comentaire
+            fields_to_translate = ['name', 'description', 'comentaire']
+            item_data = translation_service.auto_translate_fields(item_data, fields_to_translate)
 
             item = ProfileItem.objects.create(**item_data)
             item.profile_domain.update_metrics()
@@ -122,18 +134,50 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
+            # Prepare update data
+            update_data = {}
             if 'name' in request.data:
-                item.name = request.data['name']
+                update_data['name'] = request.data['name'].strip()
             if 'name_ar' in request.data:
-                item.name_ar = request.data['name_ar']
+                update_data['name_ar'] = request.data['name_ar'].strip()
             if 'description' in request.data:
-                item.description = request.data['description']
+                update_data['description'] = request.data['description'].strip()
             if 'description_ar' in request.data:
-                item.description_ar = request.data['description_ar']
+                update_data['description_ar'] = request.data['description_ar'].strip()
             if 'comentaire' in request.data:
-                item.comentaire = request.data['comentaire']
+                update_data['comentaire'] = request.data['comentaire'].strip()
             if 'commentaire_ar' in request.data:
-                item.commentaire_ar = request.data['commentaire_ar']
+                update_data['commentaire_ar'] = request.data['commentaire_ar'].strip()
+
+            # Apply automatic translation for updated fields
+            fields_to_translate = []
+            if 'name' in update_data or 'name_ar' in update_data:
+                fields_to_translate.append('name')
+            if 'description' in update_data or 'description_ar' in update_data:
+                fields_to_translate.append('description')
+            if 'comentaire' in update_data or 'commentaire_ar' in update_data:
+                fields_to_translate.append('comentaire')
+
+            if fields_to_translate:
+                # Get current values and merge with updates
+                current_data = {
+                    'name': item.name,
+                    'name_ar': item.name_ar or '',
+                    'description': item.description or '',
+                    'description_ar': item.description_ar or '',
+                    'comentaire': item.comentaire or '',
+                    'commentaire_ar': item.commentaire_ar or '',
+                }
+                current_data.update(update_data)
+                
+                # Apply translation
+                translated_data = translation_service.auto_translate_fields(current_data, fields_to_translate)
+                
+                # Update item with translated data
+                for field in fields_to_translate:
+                    setattr(item, field, translated_data[field])
+                    setattr(item, f"{field}_ar", translated_data[f"{field}_ar"])
+
             if 'etat' in request.data:
                 etat = request.data['etat']
                 if etat not in [choice[0] for choice in ProfileItem.ETAT_CHOICES]:
