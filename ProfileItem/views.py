@@ -49,7 +49,7 @@ class ProfileItemViewSet(viewsets.ViewSet):
             items = ProfileItem.objects.filter(profile_domain=domain)
             serializer = ProfileItemSerializer(items, many=True)
         
-            # Customize response to include domain and category names
+            # Customize response to include domain and category names with all _ar fields
             response_data = [
                 {
                     'id': item['id'],
@@ -59,7 +59,9 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     'description_ar': item['description_ar'],
                     'etat': item['etat'],
                     'profile_domain_name': domain.name,
+                    'profile_domain_name_ar': domain.name_ar,
                     'profile_category_name': domain.profile_category.name,
+                    'profile_category_name_ar': domain.profile_category.name_ar,
                     'comentaire': item['comentaire'],
                     'commentaire_ar': item['commentaire_ar'],
                 }
