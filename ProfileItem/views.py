@@ -126,71 +126,132 @@ class ProfileItemViewSet(viewsets.ViewSet):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, pk=None):
+        print(f"UPDATE method called with pk: {pk}")
+        print(f"Request method: {request.method}")
+        print(f"Request data: {request.data}")
         try:
             item = get_object_or_404(ProfileItem, pk=pk)
             profile = item.profile_domain.profile_category.profile
-
+            print(f"Found item: {item.id}, profile: {profile.id}")
+            
             if not self._check_edit_permission(profile, request.user):
                 return Response(
                     {'error': 'You are not authorized to update this item'},
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            # Prepare update data
+            # Prepare update data and track changes
             update_data = {}
+            changed_fields = []
+            
+            # Check for changes in name fields
             if 'name' in request.data:
-                name_value = request.data['name']
-                if name_value is not None:
-                    update_data['name'] = name_value.strip()
+                new_name = request.data['name']
+                if new_name is not None:
+                    new_name = new_name.strip()
+                    if new_name != item.name:
+                        update_data['name'] = new_name
+                        changed_fields.append('name')
+                    else:
+                        update_data['name'] = item.name
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['name'] = item.name
+            else:
+                update_data['name'] = item.name
+                
             if 'name_ar' in request.data:
-                name_ar_value = request.data['name_ar']
-                if name_ar_value is not None:
-                    update_data['name_ar'] = name_ar_value.strip()
+                new_name_ar = request.data['name_ar']
+                if new_name_ar is not None:
+                    new_name_ar = new_name_ar.strip()
+                    if new_name_ar != (item.name_ar or ''):
+                        update_data['name_ar'] = new_name_ar
+                        changed_fields.append('name_ar')
+                    else:
+                        update_data['name_ar'] = item.name_ar or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['name_ar'] = item.name_ar or ''
+            else:
+                update_data['name_ar'] = item.name_ar or ''
+            
+            # Check for changes in description fields
             if 'description' in request.data:
-                description_value = request.data['description']
-                if description_value is not None:
-                    update_data['description'] = description_value.strip()
+                new_description = request.data['description']
+                if new_description is not None:
+                    new_description = new_description.strip()
+                    if new_description != (item.description or ''):
+                        update_data['description'] = new_description
+                        changed_fields.append('description')
+                    else:
+                        update_data['description'] = item.description or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['description'] = item.description or ''
+            else:
+                update_data['description'] = item.description or ''
+                
             if 'description_ar' in request.data:
-                description_ar_value = request.data['description_ar']
-                if description_ar_value is not None:
-                    update_data['description_ar'] = description_ar_value.strip()
+                new_description_ar = request.data['description_ar']
+                if new_description_ar is not None:
+                    new_description_ar = new_description_ar.strip()
+                    if new_description_ar != (item.description_ar or ''):
+                        update_data['description_ar'] = new_description_ar
+                        changed_fields.append('description_ar')
+                    else:
+                        update_data['description_ar'] = item.description_ar or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['description_ar'] = item.description_ar or ''
+            else:
+                update_data['description_ar'] = item.description_ar or ''
+            
+            # Check for changes in commentaire fields
             if 'commentaire' in request.data:
-                commentaire_value = request.data['commentaire']
-                if commentaire_value is not None:
-                    update_data['commentaire'] = commentaire_value.strip()
+                new_commentaire = request.data['commentaire']
+                if new_commentaire is not None:
+                    new_commentaire = new_commentaire.strip()
+                    if new_commentaire != (item.commentaire or ''):
+                        update_data['commentaire'] = new_commentaire
+                        changed_fields.append('commentaire')
+                    else:
+                        update_data['commentaire'] = item.commentaire or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['commentaire'] = item.commentaire or ''
+            else:
+                update_data['commentaire'] = item.commentaire or ''
+                
             if 'commentaire_ar' in request.data:
-                commentaire_ar_value = request.data['commentaire_ar']
-                if commentaire_ar_value is not None:
-                    update_data['commentaire_ar'] = commentaire_ar_value.strip()
+                new_commentaire_ar = request.data['commentaire_ar']
+                if new_commentaire_ar is not None:
+                    new_commentaire_ar = new_commentaire_ar.strip()
+                    if new_commentaire_ar != (item.commentaire_ar or ''):
+                        update_data['commentaire_ar'] = new_commentaire_ar
+                        changed_fields.append('commentaire_ar')
+                    else:
+                        update_data['commentaire_ar'] = item.commentaire_ar or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['commentaire_ar'] = item.commentaire_ar or ''
+            else:
+                update_data['commentaire_ar'] = item.commentaire_ar or ''
 
-            # Apply automatic translation for updated fields
-            fields_to_translate = []
-            if 'name' in update_data or 'name_ar' in update_data:
-                fields_to_translate.append('name')
-            if 'description' in update_data or 'description_ar' in update_data:
-                fields_to_translate.append('description')
-            if 'commentaire' in update_data or 'commentaire_ar' in update_data:
-                fields_to_translate.append('commentaire')
+            print(f"Changed fields: {changed_fields}")
+            print(f"Before translation: {update_data}")
 
-            if fields_to_translate:
-                # Get current values and merge with updates
-                current_data = {
-                    'name': item.name,
-                    'name_ar': item.name_ar or '',
-                    'description': item.description or '',
-                    'description_ar': item.description_ar or '',
-                    'commentaire': item.commentaire or '',
-                    'commentaire_ar': item.commentaire_ar or '',
-                }
-                current_data.update(update_data)
-                
-                # Apply translation
-                translated_data = translation_service.auto_translate_fields(current_data, fields_to_translate)
-                
-                # Update item with translated data
-                for field in fields_to_translate:
-                    setattr(item, field, translated_data[field])
-                    setattr(item, f"{field}_ar", translated_data[f"{field}_ar"])
+            # Apply smart translation based on changes
+            fields_to_translate = ['name', 'description', 'commentaire']
+            translated_data = translation_service.smart_translate_fields(update_data, fields_to_translate, changed_fields)
+            print(f"After translation: {translated_data}")
+
+            # Update the item object with translated data
+            item.name = translated_data['name']
+            item.name_ar = translated_data['name_ar']
+            item.description = translated_data['description']
+            item.description_ar = translated_data['description_ar']
+            item.commentaire = translated_data['commentaire']
+            item.commentaire_ar = translated_data['commentaire_ar']
 
             if 'etat' in request.data:
                 etat = request.data['etat']
@@ -200,8 +261,10 @@ class ProfileItemViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
                 item.etat = etat
+            
             item.is_modified = True
             item.save()
+            print(f"Item saved with ID: {item.id}")
 
             serializer = ProfileItemSerializer(item)
             return Response(
@@ -210,6 +273,12 @@ class ProfileItemViewSet(viewsets.ViewSet):
             )
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def partial_update(self, request, pk=None):
+        """
+        Handle PATCH requests for partial updates
+        """
+        return self.update(request, pk)
 
     def destroy(self, request, pk=None):
         try:

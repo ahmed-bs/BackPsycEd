@@ -245,5 +245,110 @@ class TranslationService:
         
         return data
 
+    def smart_translate_fields(self, data: dict, fields_to_translate: list, changed_fields: list) -> dict:
+        """
+        Smart translation that only translates fields that haven't changed.
+        If a field was changed, its corresponding _ar field will be translated to match.
+        If an _ar field was changed, the main field will be translated to match.
+        
+        Args:
+            data: Dictionary containing the data to process
+            fields_to_translate: List of field names to translate (without _ar suffix)
+            changed_fields: List of fields that were actually changed in the request
+        Returns:
+            Updated data dictionary with smart translations
+        """
+        print(f"Starting smart_translate_fields with data: {data}")
+        print(f"Fields to translate: {fields_to_translate}")
+        print(f"Changed fields: {changed_fields}")
+        
+        for field in fields_to_translate:
+            ar_field = f"{field}_ar"
+            original_value = data.get(field, '')
+            if original_value is not None:
+                original_value = original_value.strip()
+            else:
+                original_value = ''
+            ar_value = data.get(ar_field, '')
+            if ar_value is not None:
+                ar_value = ar_value.strip()
+            else:
+                ar_value = ''
+            
+            # Check if main field was changed
+            main_field_changed = field in changed_fields
+            ar_field_changed = ar_field in changed_fields
+            
+            print(f"Processing {field}: main_changed={main_field_changed}, ar_changed={ar_field_changed}")
+            
+            # Case 1: Main field was changed, translate it to Arabic for _ar field
+            if main_field_changed and not ar_field_changed:
+                print(f"Main field {field} was changed, translating to Arabic")
+                detected_lang = self.detect_language(original_value)
+                if detected_lang and detected_lang not in ['ar', 'arabic']:
+                    # Main field is French/English, translate to Arabic
+                    arabic_text = self.translate_text(original_value, 'ar', detected_lang)
+                    if arabic_text:
+                        data[ar_field] = arabic_text
+                        print(f"Translated French {field} to Arabic: {arabic_text}")
+                    else:
+                        print(f"Failed to translate French {field} to Arabic")
+                elif detected_lang in ['ar', 'arabic']:
+                    # If main field is Arabic, translate to French and swap
+                    french_text = self.translate_text(original_value, 'fr', detected_lang)
+                    if french_text:
+                        data[field] = french_text
+                        data[ar_field] = original_value
+                        print(f"Swapped Arabic {field} to French: {french_text}")
+            
+            # Case 2: Arabic field was changed, translate it to French for main field
+            elif ar_field_changed and not main_field_changed:
+                print(f"Arabic field {ar_field} was changed, translating to French")
+                detected_lang = self.detect_language(ar_value)
+                if detected_lang in ['ar', 'arabic']:
+                    french_text = self.translate_text(ar_value, 'fr', detected_lang)
+                    if french_text:
+                        data[field] = french_text
+                        print(f"Translated {ar_field} to French: {french_text}")
+                    else:
+                        print(f"Failed to translate {ar_field} to French")
+                else:
+                    # If _ar field is not Arabic, translate main field to Arabic
+                    main_lang = self.detect_language(original_value)
+                    if main_lang and main_lang not in ['ar', 'arabic']:
+                        arabic_text = self.translate_text(original_value, 'ar', main_lang)
+                        if arabic_text:
+                            data[ar_field] = arabic_text
+                            print(f"Translated French {field} to Arabic: {arabic_text}")
+            
+            # Case 3: Both fields were changed - ensure they're in correct languages
+            elif main_field_changed and ar_field_changed:
+                print(f"Both {field} and {ar_field} were changed, ensuring correct languages")
+                main_lang = self.detect_language(original_value)
+                ar_lang = self.detect_language(ar_value)
+                
+                # Ensure main field is French/English and _ar field is Arabic
+                if main_lang in ['ar', 'arabic']:
+                    # Main field is Arabic, translate to French
+                    french_text = self.translate_text(original_value, 'fr', main_lang)
+                    if french_text:
+                        data[field] = french_text
+                        print(f"Translated Arabic {field} to French: {french_text}")
+                
+                if ar_lang not in ['ar', 'arabic']:
+                    # _ar field is not Arabic, translate main field to Arabic
+                    if main_lang and main_lang not in ['ar', 'arabic']:
+                        arabic_text = self.translate_text(original_value, 'ar', main_lang)
+                        if arabic_text:
+                            data[ar_field] = arabic_text
+                            print(f"Translated French {field} to Arabic: {arabic_text}")
+            
+            # Case 4: Neither field was changed - no translation needed
+            else:
+                print(f"Neither {field} nor {ar_field} was changed, skipping translation")
+        
+        print(f"Final smart translated data: {data}")
+        return data
+
 # Create a global instance
 translation_service = TranslationService()
