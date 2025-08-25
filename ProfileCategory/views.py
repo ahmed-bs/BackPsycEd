@@ -164,42 +164,62 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
             
             # Check for changes in name fields
             if 'name' in request.data:
-                new_name = request.data['name'].strip()
-                if new_name != category.name:
-                    update_data['name'] = new_name
-                    changed_fields.append('name')
+                new_name = request.data['name']
+                if new_name is not None:
+                    new_name = new_name.strip()
+                    if new_name != category.name:
+                        update_data['name'] = new_name
+                        changed_fields.append('name')
+                    else:
+                        update_data['name'] = category.name
                 else:
+                    # If None is sent, keep the existing value
                     update_data['name'] = category.name
             else:
                 update_data['name'] = category.name
                 
             if 'name_ar' in request.data:
-                new_name_ar = request.data['name_ar'].strip()
-                if new_name_ar != (category.name_ar or ''):
-                    update_data['name_ar'] = new_name_ar
-                    changed_fields.append('name_ar')
+                new_name_ar = request.data['name_ar']
+                if new_name_ar is not None:
+                    new_name_ar = new_name_ar.strip()
+                    if new_name_ar != (category.name_ar or ''):
+                        update_data['name_ar'] = new_name_ar
+                        changed_fields.append('name_ar')
+                    else:
+                        update_data['name_ar'] = category.name_ar or ''
                 else:
+                    # If None is sent, keep the existing value
                     update_data['name_ar'] = category.name_ar or ''
             else:
                 update_data['name_ar'] = category.name_ar or ''
             
             # Check for changes in description fields
             if 'description' in request.data:
-                new_description = request.data['description'].strip()
-                if new_description != (category.description or ''):
-                    update_data['description'] = new_description
-                    changed_fields.append('description')
+                new_description = request.data['description']
+                if new_description is not None:
+                    new_description = new_description.strip()
+                    if new_description != (category.description or ''):
+                        update_data['description'] = new_description
+                        changed_fields.append('description')
+                    else:
+                        update_data['description'] = category.description or ''
                 else:
+                    # If None is sent, keep the existing value
                     update_data['description'] = category.description or ''
             else:
                 update_data['description'] = category.description or ''
                 
             if 'description_ar' in request.data:
-                new_description_ar = request.data['description_ar'].strip()
-                if new_description_ar != (category.description_ar or ''):
-                    update_data['description_ar'] = new_description_ar
-                    changed_fields.append('description_ar')
+                new_description_ar = request.data['description_ar']
+                if new_description_ar is not None:
+                    new_description_ar = new_description_ar.strip()
+                    if new_description_ar != (category.description_ar or ''):
+                        update_data['description_ar'] = new_description_ar
+                        changed_fields.append('description_ar')
+                    else:
+                        update_data['description_ar'] = category.description_ar or ''
                 else:
+                    # If None is sent, keep the existing value
                     update_data['description_ar'] = category.description_ar or ''
             else:
                 update_data['description_ar'] = category.description_ar or ''

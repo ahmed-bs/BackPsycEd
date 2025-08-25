@@ -62,7 +62,7 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     'profile_domain_name_ar': domain.name_ar,
                     'profile_category_name': domain.profile_category.name,
                     'profile_category_name_ar': domain.profile_category.name_ar,
-                    'comentaire': item['comentaire'],
+                    'commentaire': item['commentaire'],
                     'commentaire_ar': item['commentaire_ar'],
                 }
                 for item in serializer.data
@@ -106,13 +106,13 @@ class ProfileItemViewSet(viewsets.ViewSet):
                 'name_ar': name_ar,
                 'description': request.data.get('description', '').strip(),
                 'description_ar': request.data.get('description_ar', '').strip(),
-                'comentaire': request.data.get('comentaire', '').strip(),
+                'commentaire': request.data.get('commentaire', '').strip(),
                 'commentaire_ar': request.data.get('commentaire_ar', '').strip(),
                 'etat': request.data.get('etat', 'NON_COTE'),
             }
 
-            # Apply automatic translation for name, description, and comentaire
-            fields_to_translate = ['name', 'description', 'comentaire']
+            # Apply automatic translation for name, description, and commentaire
+            fields_to_translate = ['name', 'description', 'commentaire']
             item_data = translation_service.auto_translate_fields(item_data, fields_to_translate)
 
             item = ProfileItem.objects.create(**item_data)
@@ -139,17 +139,29 @@ class ProfileItemViewSet(viewsets.ViewSet):
             # Prepare update data
             update_data = {}
             if 'name' in request.data:
-                update_data['name'] = request.data['name'].strip()
+                name_value = request.data['name']
+                if name_value is not None:
+                    update_data['name'] = name_value.strip()
             if 'name_ar' in request.data:
-                update_data['name_ar'] = request.data['name_ar'].strip()
+                name_ar_value = request.data['name_ar']
+                if name_ar_value is not None:
+                    update_data['name_ar'] = name_ar_value.strip()
             if 'description' in request.data:
-                update_data['description'] = request.data['description'].strip()
+                description_value = request.data['description']
+                if description_value is not None:
+                    update_data['description'] = description_value.strip()
             if 'description_ar' in request.data:
-                update_data['description_ar'] = request.data['description_ar'].strip()
-            if 'comentaire' in request.data:
-                update_data['comentaire'] = request.data['comentaire'].strip()
+                description_ar_value = request.data['description_ar']
+                if description_ar_value is not None:
+                    update_data['description_ar'] = description_ar_value.strip()
+            if 'commentaire' in request.data:
+                commentaire_value = request.data['commentaire']
+                if commentaire_value is not None:
+                    update_data['commentaire'] = commentaire_value.strip()
             if 'commentaire_ar' in request.data:
-                update_data['commentaire_ar'] = request.data['commentaire_ar'].strip()
+                commentaire_ar_value = request.data['commentaire_ar']
+                if commentaire_ar_value is not None:
+                    update_data['commentaire_ar'] = commentaire_ar_value.strip()
 
             # Apply automatic translation for updated fields
             fields_to_translate = []
@@ -157,8 +169,8 @@ class ProfileItemViewSet(viewsets.ViewSet):
                 fields_to_translate.append('name')
             if 'description' in update_data or 'description_ar' in update_data:
                 fields_to_translate.append('description')
-            if 'comentaire' in update_data or 'commentaire_ar' in update_data:
-                fields_to_translate.append('comentaire')
+            if 'commentaire' in update_data or 'commentaire_ar' in update_data:
+                fields_to_translate.append('commentaire')
 
             if fields_to_translate:
                 # Get current values and merge with updates
@@ -167,7 +179,7 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     'name_ar': item.name_ar or '',
                     'description': item.description or '',
                     'description_ar': item.description_ar or '',
-                    'comentaire': item.comentaire or '',
+                    'commentaire': item.commentaire or '',
                     'commentaire_ar': item.commentaire_ar or '',
                 }
                 current_data.update(update_data)

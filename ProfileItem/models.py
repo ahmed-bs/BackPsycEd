@@ -20,7 +20,7 @@ class ProfileItem(models.Model):
     name_ar = models.CharField(max_length=500, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     description_ar = models.TextField(blank=True, null=True)
-    comentaire = models.TextField(blank=True, null=True)
+    commentaire = models.TextField(blank=True, null=True)
     commentaire_ar = models.TextField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)
     modified_at = models.DateTimeField(auto_now=True)

@@ -146,43 +146,102 @@ class ProfileDomainViewSet(viewsets.ViewSet):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, pk=None):
+        print(f"UPDATE method called with pk: {pk}")
+        print(f"Request method: {request.method}")
+        print(f"Request data: {request.data}")
         try:
             domain = get_object_or_404(ProfileDomain, pk=pk)
             profile = domain.profile_category.profile
-
+            print(f"Found domain: {domain.id}, profile: {profile.id}")
+            
             if not self._check_edit_permission(profile, request.user):
                 return Response(
                     {'error': 'You are not authorized to update this domain'},
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            # Prepare update data with current values as fallback
-            update_data = {
-                'name': getattr(domain, 'name', ''),
-                'name_ar': getattr(domain, 'name_ar', ''),
-                'description': getattr(domain, 'description', ''),
-                'description_ar': getattr(domain, 'description_ar', ''),
-            }
-
-            # Update with new values from request
+            # Prepare update data and track changes
+            update_data = {}
+            changed_fields = []
+            
+            # Check for changes in name fields
             if 'name' in request.data:
-                update_data['name'] = request.data['name'].strip()
+                new_name = request.data['name']
+                if new_name is not None:
+                    new_name = new_name.strip()
+                    if new_name != domain.name:
+                        update_data['name'] = new_name
+                        changed_fields.append('name')
+                    else:
+                        update_data['name'] = domain.name
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['name'] = domain.name
+            else:
+                update_data['name'] = domain.name
+                
             if 'name_ar' in request.data:
-                update_data['name_ar'] = request.data['name_ar'].strip()
+                new_name_ar = request.data['name_ar']
+                if new_name_ar is not None:
+                    new_name_ar = new_name_ar.strip()
+                    if new_name_ar != (domain.name_ar or ''):
+                        update_data['name_ar'] = new_name_ar
+                        changed_fields.append('name_ar')
+                    else:
+                        update_data['name_ar'] = domain.name_ar or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['name_ar'] = domain.name_ar or ''
+            else:
+                update_data['name_ar'] = domain.name_ar or ''
+            
+            # Check for changes in description fields
             if 'description' in request.data:
-                update_data['description'] = request.data['description'].strip()
+                new_description = request.data['description']
+                if new_description is not None:
+                    new_description = new_description.strip()
+                    if new_description != (domain.description or ''):
+                        update_data['description'] = new_description
+                        changed_fields.append('description')
+                    else:
+                        update_data['description'] = domain.description or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['description'] = domain.description or ''
+            else:
+                update_data['description'] = domain.description or ''
+                
             if 'description_ar' in request.data:
-                update_data['description_ar'] = request.data['description_ar'].strip()
+                new_description_ar = request.data['description_ar']
+                if new_description_ar is not None:
+                    new_description_ar = new_description_ar.strip()
+                    if new_description_ar != (domain.description_ar or ''):
+                        update_data['description_ar'] = new_description_ar
+                        changed_fields.append('description_ar')
+                    else:
+                        update_data['description_ar'] = domain.description_ar or ''
+                else:
+                    # If None is sent, keep the existing value
+                    update_data['description_ar'] = domain.description_ar or ''
+            else:
+                update_data['description_ar'] = domain.description_ar or ''
 
-            # Apply automatic translation for name and description
+            print(f"Changed fields: {changed_fields}")
+            print(f"Before translation: {update_data}")
+
+            # Apply smart translation based on changes
             fields_to_translate = ['name', 'description']
-            update_data = translation_service.auto_translate_fields(update_data, fields_to_translate)
+            translated_data = translation_service.smart_translate_fields(update_data, fields_to_translate, changed_fields)
+            print(f"After translation: {translated_data}")
 
-            # Update domain fields
-            for field, value in update_data.items():
-                setattr(domain, field, value)
+            # Update the domain object with translated data
+            domain.name = translated_data['name']
+            domain.name_ar = translated_data['name_ar']
+            domain.description = translated_data['description']
+            domain.description_ar = translated_data['description_ar']
             
             domain.save()
+            print(f"Domain saved with ID: {domain.id}")
 
             serializer = ProfileDomainSerializer(domain)
             return Response(
@@ -191,6 +250,12 @@ class ProfileDomainViewSet(viewsets.ViewSet):
             )
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def partial_update(self, request, pk=None):
+        """
+        Handle PATCH requests for partial updates
+        """
+        return self.update(request, pk)
 
     def destroy(self, request, pk=None):
         try:

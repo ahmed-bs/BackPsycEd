@@ -170,8 +170,16 @@ class TranslationService:
         """
         for field in fields_to_translate:
             ar_field = f"{field}_ar"
-            original_value = data.get(field, '').strip()
-            ar_value = data.get(ar_field, '').strip()
+            original_value = data.get(field, '')
+            if original_value is not None:
+                original_value = original_value.strip()
+            else:
+                original_value = ''
+            ar_value = data.get(ar_field, '')
+            if ar_value is not None:
+                ar_value = ar_value.strip()
+            else:
+                ar_value = ''
             
             # Case 1: Only main field has content (name/description/comentaire provided)
             if original_value and not ar_value:

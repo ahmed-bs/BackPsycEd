@@ -9,7 +9,7 @@ from ProfileItem.models import ProfileItem
 class ProfileItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileItem
-        fields = ['id', 'name', 'name_ar', 'description', 'description_ar', 'etat', 'is_modified', 'modified_at', 'comentaire', 'commentaire_ar']
+        fields = ['id', 'name', 'name_ar', 'description', 'description_ar', 'etat', 'is_modified', 'modified_at', 'commentaire', 'commentaire_ar']
         read_only_fields = ['id', 'is_modified', 'modified_at']
 
     def validate_etat(self, value):
