@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from profiles.models import Profile, SharedProfilePermission
 from profiles.serializers import ProfileCategorySerializer
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from ProfileCategory.models import ProfileCategory
 from .translation_utils import translation_service
 
@@ -15,6 +16,29 @@ from .translation_utils import translation_service
 class ProfileCategoryViewSet(viewsets.ViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def debug_urls(self, request):
+        """
+        Debug endpoint to show available URLs and methods
+        """
+        return Response({
+            'message': 'ProfileCategory ViewSet URLs',
+            'available_endpoints': {
+                'list': 'GET /category/categories/',
+                'create': 'POST /category/categories/',
+                'retrieve': 'GET /category/categories/{id}/',
+                'update': 'PUT /category/categories/{id}/',
+                'partial_update': 'PATCH /category/categories/{id}/',
+                'destroy': 'DELETE /category/categories/{id}/',
+            },
+            'current_request': {
+                'method': request.method,
+                'path': request.path,
+                'query_params': dict(request.query_params),
+                'data': request.data if hasattr(request, 'data') else None
+            }
+        })
 
     def _check_view_permission(self, profile, user):
         if user.is_superuser:
@@ -69,6 +93,10 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request ):
+        print("CREATE method called")
+        print(f"Request method: {request.method}")
+        print(f"Request path: {request.path}")
+        print(f"Request data: {request.data}")
         profile_id = request.query_params.get('profile_id')
         print(f"Profile ID this is where to look: {profile_id}")
         profile_id = int(profile_id) if profile_id else None
@@ -106,6 +134,7 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
             category_data = translation_service.auto_translate_fields(category_data, fields_to_translate)
 
             category = ProfileCategory.objects.create(**category_data)
+            print(f"Category created with ID: {category.id}")
             serializer = ProfileCategorySerializer(category)
             return Response(
                 {'message': 'Category created successfully', 'data': serializer.data},
@@ -115,56 +144,82 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, pk=None):
-        print(f"Profile ID this is where to look: {pk}")
-        pk = int(pk) if pk else None
+        print(f"UPDATE method called with pk: {pk}")
+        print(f"Request method: {request.method}")
+        print(f"Request data: {request.data}")
         try:
             category = get_object_or_404(ProfileCategory, pk=pk)
             profile = category.profile
-            print(f"Profile ID: {profile.id}")
-            print(f"Category ID: {category.id}")
+            print(f"Found category: {category.id}, profile: {profile.id}")
+            
             if not self._check_edit_permission(profile, request.user):
                 return Response(
                     {'error': 'You are not authorized to update this category'},
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            # Prepare update data
+            # Prepare update data and track changes
             update_data = {}
+            changed_fields = []
+            
+            # Check for changes in name fields
             if 'name' in request.data:
-                update_data['name'] = request.data['name'].strip()
+                new_name = request.data['name'].strip()
+                if new_name != category.name:
+                    update_data['name'] = new_name
+                    changed_fields.append('name')
+                else:
+                    update_data['name'] = category.name
+            else:
+                update_data['name'] = category.name
+                
             if 'name_ar' in request.data:
-                update_data['name_ar'] = request.data['name_ar'].strip()
+                new_name_ar = request.data['name_ar'].strip()
+                if new_name_ar != (category.name_ar or ''):
+                    update_data['name_ar'] = new_name_ar
+                    changed_fields.append('name_ar')
+                else:
+                    update_data['name_ar'] = category.name_ar or ''
+            else:
+                update_data['name_ar'] = category.name_ar or ''
+            
+            # Check for changes in description fields
             if 'description' in request.data:
-                update_data['description'] = request.data['description'].strip()
+                new_description = request.data['description'].strip()
+                if new_description != (category.description or ''):
+                    update_data['description'] = new_description
+                    changed_fields.append('description')
+                else:
+                    update_data['description'] = category.description or ''
+            else:
+                update_data['description'] = category.description or ''
+                
             if 'description_ar' in request.data:
-                update_data['description_ar'] = request.data['description_ar'].strip()
+                new_description_ar = request.data['description_ar'].strip()
+                if new_description_ar != (category.description_ar or ''):
+                    update_data['description_ar'] = new_description_ar
+                    changed_fields.append('description_ar')
+                else:
+                    update_data['description_ar'] = category.description_ar or ''
+            else:
+                update_data['description_ar'] = category.description_ar or ''
 
-            # Apply automatic translation for updated fields
-            fields_to_translate = []
-            if 'name' in update_data or 'name_ar' in update_data:
-                fields_to_translate.append('name')
-            if 'description' in update_data or 'description_ar' in update_data:
-                fields_to_translate.append('description')
+            print(f"Changed fields: {changed_fields}")
+            print(f"Before translation: {update_data}")
 
-            if fields_to_translate:
-                # Get current values and merge with updates
-                current_data = {
-                    'name': category.name,
-                    'name_ar': category.name_ar or '',
-                    'description': category.description or '',
-                    'description_ar': category.description_ar or '',
-                }
-                current_data.update(update_data)
-                
-                # Apply translation
-                translated_data = translation_service.auto_translate_fields(current_data, fields_to_translate)
-                
-                # Update category with translated data
-                for field in fields_to_translate:
-                    setattr(category, field, translated_data[field])
-                    setattr(category, f"{field}_ar", translated_data[f"{field}_ar"])
+            # Apply smart translation based on changes
+            fields_to_translate = ['name', 'description']
+            translated_data = translation_service.smart_translate_fields(update_data, fields_to_translate, changed_fields)
+            print(f"After translation: {translated_data}")
 
+            # Update the category object with translated data
+            category.name = translated_data['name']
+            category.name_ar = translated_data['name_ar']
+            category.description = translated_data['description']
+            category.description_ar = translated_data['description_ar']
+            
             category.save()
+            print(f"Category saved with ID: {category.id}")
 
             serializer = ProfileCategorySerializer(category)
             return Response(
@@ -173,6 +228,12 @@ class ProfileCategoryViewSet(viewsets.ViewSet):
             )
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def partial_update(self, request, pk=None):
+        """
+        Handle PATCH requests for partial updates
+        """
+        return self.update(request, pk)
 
     def destroy(self, request, pk=None):
         try:
