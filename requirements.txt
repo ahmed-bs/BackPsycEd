@@ -4,7 +4,8 @@ djangorestframework==3.16.0
 asgiref==3.8.1
 
 # Database
-psycopg2==2.9.10
+mysqlclient==2.2.0
+PyMySQL==1.1.0
 sqlparse==0.5.3
 
 # Authentication and Security
