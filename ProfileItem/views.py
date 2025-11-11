@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from profiles.models import  SharedProfilePermission
 from ProfileItem.models import ProfileItem
@@ -64,6 +65,8 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     'profile_category_name_ar': domain.profile_category.name_ar,
                     'commentaire': item['commentaire'],
                     'commentaire_ar': item['commentaire_ar'],
+                    'isPeu': item.get('isPeu', False),
+                    'done': item.get('done', False),
                 }
                 for item in serializer.data
             ]
@@ -262,6 +265,14 @@ class ProfileItemViewSet(viewsets.ViewSet):
                     )
                 item.etat = etat
             
+            # Handle isPeu field
+            if 'isPeu' in request.data:
+                item.isPeu = bool(request.data['isPeu'])
+            
+            # Handle done field
+            if 'done' in request.data:
+                item.done = bool(request.data['done'])
+            
             item.is_modified = True
             item.save()
             print(f"Item saved with ID: {item.id}")
@@ -298,3 +309,43 @@ class ProfileItemViewSet(viewsets.ViewSet):
             )
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['patch', 'put'], url_path='toggle-ispeu')
+    def toggle_ispeu(self, request, pk=None):
+        """
+        Toggle the isPeu field for a ProfileItem.
+        Accepts a boolean value in the request body or toggles the current value.
+        """
+        try:
+            item = get_object_or_404(ProfileItem, pk=pk)
+            profile = item.profile_domain.profile_category.profile
+            
+            if not self._check_edit_permission(profile, request.user):
+                return Response(
+                    {'error': 'You are not authorized to update this item'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # If isPeu is provided in request, use it; otherwise toggle
+            if 'isPeu' in request.data:
+                item.isPeu = bool(request.data['isPeu'])
+            else:
+                # Toggle the current value
+                item.isPeu = not item.isPeu
+            
+            item.is_modified = True
+            item.save()
+            
+            serializer = ProfileItemSerializer(item)
+            return Response(
+                {
+                    'message': 'isPeu updated successfully',
+                    'data': serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

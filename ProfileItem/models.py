@@ -25,6 +25,8 @@ class ProfileItem(models.Model):
     is_modified = models.BooleanField(default=False)
     modified_at = models.DateTimeField(auto_now=True)
     etat = models.CharField(max_length=10, choices=ETAT_CHOICES, default='NON_COTE')
+    isPeu = models.BooleanField(default=False)
+    done = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} (Domain: {self.profile_domain})"
