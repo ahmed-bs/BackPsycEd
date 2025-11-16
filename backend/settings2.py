@@ -140,48 +140,37 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Database Configuration
-# Uses environment variables with fallback to SQLite for development
-DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite')  # 'mysql', 'postgresql', or 'sqlite'
+# Database MySQL
+# DATABASES = {
+#      'default': {
+#          'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv('DB_NAME', 'evaluation'),
+#         'USER': os.getenv('DB_USER', 'root'),
+#         'PASSWORD': os.getenv('DB_PASSWORD', '!'),
+#         'HOST': os.getenv('DB_HOST', 'localhost'),
+#         'PORT': os.getenv('DB_PORT', '3306'),
+#          'OPTIONS': {
+#              'charset': 'utf8mb4',
+#              'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#          }
+#      }
+# }
 
-if DB_ENGINE == 'mysql':
-    db_password = os.getenv('DB_PASSWORD', '')
-    # Convert empty string to None for MySQL when no password is set
-    if db_password == '':
-        db_password = None
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME', 'PsychoEducatif'),
-            'USER': os.getenv('DB_USER', 'root'),
-            'PASSWORD': db_password,
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '3306'),
-            'OPTIONS': {
-                'charset': 'utf8mb4',
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            }
-        }
-    }
-elif DB_ENGINE == 'postgresql':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', 'psychoeducatif'),
-            'USER': os.getenv('DB_USER', 'postgres'),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
-        }
-    }
-else:
-    # SQLite fallback for development (default)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+# Database MySQL
+DATABASES = {
+     'default': {
+         'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'PsychoEducatif'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'admin123'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+         'OPTIONS': {
+             'charset': 'utf8mb4',
+             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+         }
+     }
+}
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

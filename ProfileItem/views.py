@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
 from django.shortcuts import get_object_or_404
 from profiles.models import  SharedProfilePermission
 from ProfileItem.models import ProfileItem
@@ -78,6 +78,59 @@ class ProfileItemViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @action(detail=False, methods=['get'], url_path='items-peu')
+    def list_peu_items(self, request):
+        """
+        List only ProfileItems where isPeu = true for a given domain.
+        Requires domain_id query parameter.
+        """
+        try:
+            domain_id = request.query_params.get('domain_id')
+            if not domain_id:
+                return Response(
+                    {'error': 'domain_id query parameter is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            domain = get_object_or_404(ProfileDomain, pk=domain_id)
+            profile = domain.profile_category.profile
+
+            if not self._check_view_permission(profile, request.user):
+                return Response(
+                    {'error': 'You are not authorized to view items for this domain'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            items = ProfileItem.objects.filter(profile_domain=domain, isPeu=True)
+            serializer = ProfileItemSerializer(items, many=True)
+        
+            # Customize response to include domain and category names with all _ar fields
+            response_data = [
+                {
+                    'id': item['id'],
+                    'name': item['name'],
+                    'name_ar': item['name_ar'],
+                    'description': item['description'],
+                    'description_ar': item['description_ar'],
+                    'etat': item['etat'],
+                    'profile_domain_name': domain.name,
+                    'profile_domain_name_ar': domain.name_ar,
+                    'profile_category_name': domain.profile_category.name,
+                    'profile_category_name_ar': domain.profile_category.name_ar,
+                    'commentaire': item['commentaire'],
+                    'commentaire_ar': item['commentaire_ar'],
+                    'isPeu': item.get('isPeu', False),
+                    'done': item.get('done', False),
+                }
+                for item in serializer.data
+            ]
+            
+            return Response(
+                {'message': 'Items with isPeu=true retrieved successfully', 'data': response_data},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request):
         try:
@@ -349,3 +402,113 @@ class ProfileItemViewSet(viewsets.ViewSet):
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+    @action(detail=True, methods=['patch', 'put'], url_path='update-status')
+    def update_status(self, request, pk=None):
+        """
+        Update only isPeu and done fields for a ProfileItem.
+        Accepts isPeu and/or done boolean values in the request body.
+        """
+        try:
+            item = get_object_or_404(ProfileItem, pk=pk)
+            profile = item.profile_domain.profile_category.profile
+            
+            if not self._check_edit_permission(profile, request.user):
+                return Response(
+                    {'error': 'You are not authorized to update this item'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # Check if at least one of the fields is provided
+            if 'isPeu' not in request.data and 'done' not in request.data:
+                return Response(
+                    {'error': 'At least one of isPeu or done must be provided'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Update isPeu if provided
+            if 'isPeu' in request.data:
+                item.isPeu = bool(request.data['isPeu'])
+            
+            # Update done if provided
+            if 'done' in request.data:
+                item.done = bool(request.data['done'])
+            
+            item.is_modified = True
+            item.save()
+            
+            serializer = ProfileItemSerializer(item)
+            return Response(
+                {
+                    'message': 'Status updated successfully',
+                    'data': serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+# Standalone function-based view for items-peu endpoint
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def list_peu_items_view(request):
+    """
+    List only ProfileItems where isPeu = true for a given domain.
+    Requires domain_id query parameter.
+    """
+    try:
+        domain_id = request.query_params.get('domain_id')
+        if not domain_id:
+            return Response(
+                {'error': 'domain_id query parameter is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        domain = get_object_or_404(ProfileDomain, pk=domain_id)
+        profile = domain.profile_category.profile
+
+        # Check view permission
+        if not request.user.is_superuser:
+            if not SharedProfilePermission.objects.filter(
+                profile=profile, shared_with=request.user, permissions='view'
+            ).exists():
+                return Response(
+                    {'error': 'You are not authorized to view items for this domain'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+        items = ProfileItem.objects.filter(profile_domain=domain, isPeu=True)
+        serializer = ProfileItemSerializer(items, many=True)
+    
+        # Customize response to include domain and category names with all _ar fields
+        response_data = [
+            {
+                'id': item['id'],
+                'name': item['name'],
+                'name_ar': item['name_ar'],
+                'description': item['description'],
+                'description_ar': item['description_ar'],
+                'etat': item['etat'],
+                'profile_domain_name': domain.name,
+                'profile_domain_name_ar': domain.name_ar,
+                'profile_category_name': domain.profile_category.name,
+                'profile_category_name_ar': domain.profile_category.name_ar,
+                'commentaire': item['commentaire'],
+                'commentaire_ar': item['commentaire_ar'],
+                'isPeu': item.get('isPeu', False),
+                'done': item.get('done', False),
+            }
+            for item in serializer.data
+        ]
+        
+        return Response(
+            {'message': 'Items with isPeu=true retrieved successfully', 'data': response_data},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
