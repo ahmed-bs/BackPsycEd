@@ -141,12 +141,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # Database Configuration
-# Uses environment variables with fallback to SQLite for development
-DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite')  # 'mysql', 'postgresql', or 'sqlite'
+# Uses MySQL only - requires DB_ENGINE=mysql in environment variables
+DB_ENGINE = os.getenv('DB_ENGINE', 'mysql')  # Default to MySQL
 
 if DB_ENGINE == 'mysql':
-    db_password = os.getenv('DB_PASSWORD', '')
-    # Convert empty string to None for MySQL when no password is set
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -173,13 +171,10 @@ elif DB_ENGINE == 'postgresql':
         }
     }
 else:
-    # SQLite fallback for development (default)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+    raise ValueError(
+        f"Invalid DB_ENGINE: {DB_ENGINE}. Must be 'mysql' or 'postgresql'. "
+        "SQLite is not supported. Please set DB_ENGINE in your .env file."
+    )
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
