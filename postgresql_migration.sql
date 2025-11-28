@@ -11,5 +11,5 @@ ADD COLUMN "done" BOOLEAN NOT NULL DEFAULT FALSE;
 
 -- Optional: Add comments to the columns for documentation
 COMMENT ON COLUMN profile_item."isPeu" IS 'Boolean field indicating if the item is peu';
-COMMENT ON COLUMN profile_item."done" IS 'Boolean field indicating if the item is done';
+COMMENT ON COLUMN profile_item."done" IS 'Boolean field indicating if the item is done';exi
 

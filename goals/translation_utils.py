@@ -1,12 +1,13 @@
 import os
 import re
 from typing import Optional
-from googletrans import Translator
 
 class TranslationService:
     def __init__(self):
-        # Initialize the googletrans Translator
+        # Initialize the googletrans Translator with lazy import
+        self.translator = None
         try:
+            from googletrans import Translator
             self.translator = Translator()
             print("googletrans Translator initialized successfully")
         except Exception as e:
