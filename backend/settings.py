@@ -141,18 +141,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # Database Configuration
-# Uses MySQL only - requires DB_ENGINE=mysql in environment variables
-DB_ENGINE = os.getenv('DB_ENGINE', 'mysql')  # Default to MySQL
-
-# if DB_ENGINE == 'mysql':
+# MySQL database settings - UPDATE THESE WITH YOUR ACTUAL CREDENTIALS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'evaluation'),
-        'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'NAME': 'evaluation',
+        'USER': 'django_user',  # Change this to your MySQL username
+        'PASSWORD': 'your_password_here',  # Change this to your MySQL password
+        'HOST': 'localhost',
+        'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
