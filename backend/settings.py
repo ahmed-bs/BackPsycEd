@@ -147,14 +147,12 @@ DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite')  # 'mysql', 'postgresql', or 'sqlit
 if DB_ENGINE == 'mysql':
     db_password = os.getenv('DB_PASSWORD', '')
     # Convert empty string to None for MySQL when no password is set
-    if db_password == '':
-        db_password = None
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME', 'PsychoEducatif'),
+            'NAME': os.getenv('DB_NAME', 'evaluation'),
             'USER': os.getenv('DB_USER', 'root'),
-            'PASSWORD': db_password,
+            'PASSWORD': os.getenv('DB_PASSWORD', '!'),
             'HOST': os.getenv('DB_HOST', 'localhost'),
             'PORT': os.getenv('DB_PORT', '3306'),
             'OPTIONS': {
